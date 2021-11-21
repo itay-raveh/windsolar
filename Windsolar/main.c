@@ -1,5 +1,3 @@
-#define DEBUG
-
 #include <unistd.h>
 #include <string.h>
 #include "utils.h"
