@@ -2,8 +2,8 @@
 // Created by itay on 11/18/21.
 //
 
-#ifndef WINDSOLAR_DEBUG_H
-#define WINDSOLAR_DEBUG_H
+#ifndef WINDSOLAR_MACROS_H
+#define WINDSOLAR_MACROS_H
 
 #if DEBUG
 #include <stdio.h>
@@ -12,4 +12,4 @@
 #define debug(x, ...) /* x */
 #endif
 
-#endif //WINDSOLAR_DEBUG_H
+#endif //WINDSOLAR_MACROS_H

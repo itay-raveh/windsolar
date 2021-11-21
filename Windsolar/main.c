@@ -2,7 +2,7 @@
 #include <string.h>
 #include "utils.h"
 #define DEBUG 1
-#include "debug.h"
+#include "macros.h"
 
 
 char *usage = "Usage: windsolar FILE\n"

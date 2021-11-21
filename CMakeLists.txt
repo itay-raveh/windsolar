@@ -3,4 +3,4 @@ project(windsolar C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(windsolar main.c utils.c utils.h debug.h)
+add_executable(windsolar Windsolar/main.c Windsolar/utils.c Windsolar/utils.h Windsolar/macros.h)
