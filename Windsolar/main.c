@@ -1,7 +1,7 @@
+#define DEBUG
 #include <unistd.h>
 #include <string.h>
 #include "utils.h"
-#define DEBUG 1
 #include "macros.h"
 
 
@@ -18,5 +18,5 @@ int main(int argc, char *argv[])
     if (access(fname, F_OK) != 0) print_and_exit("Error: File does not exist", EXIT_FAILURE);
     if (access(fname, R_OK) != 0) print_and_exit("Error: No permissions to read file", EXIT_FAILURE);
 
-    debug("using file: %s", fname);
+    TRACE("using file: %s\n", fname);
 }

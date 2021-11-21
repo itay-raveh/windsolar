@@ -5,11 +5,11 @@
 #ifndef WINDSOLAR_MACROS_H
 #define WINDSOLAR_MACROS_H
 
-#if DEBUG
+#ifdef DEBUG
 #include <stdio.h>
-#define debug(x, ...) do{fprintf(stderr, "%s:%s:%u: " x "\n", __FILE__, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);}while(0)
+#define TRACE(fmt, ...) do{fprintf(stderr, "%s:%s(%4u) " fmt, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__);}while(0)
 #else
-#define debug(x, ...) /* x */
+#define TRACE(fmt, ...)
 #endif
 
 #endif //WINDSOLAR_MACROS_H
