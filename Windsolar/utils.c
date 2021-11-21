@@ -3,16 +3,11 @@
 //
 
 #include "utils.h"
-
-void print_and_exit(char *msg, int code)
-{
-    fprintf(code ? stderr : stdout, "%s", msg);
-    exit(code);
-}
+#include "macros.h"
 
 void *malloc_s(size_t size)
 {
     void *p = malloc(size);
-    if (!p) print_and_exit("Error: memory allocation error", EXIT_FAILURE);
+    if (p == NULL) EXIT_WITH_MSG(EXIT_FAILURE, "%s", "Error: memory allocation error");
     return p;
 }
