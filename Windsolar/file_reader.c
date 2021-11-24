@@ -9,12 +9,17 @@
 
 FileReader *FileReader_init(char *fname, size_t fsize)
 {
-    FileReader *fr = malloc_s(sizeof(FileReader));
+    assert(fname);
+    assert(fsize >= 0);
+
+    FileReader *fr = (FileReader *) malloc_s(sizeof(FileReader));
     fr->buff = malloc_s(fsize + 1); // +1 for \0
     fr->fsize = fsize;
     fr->i = 0;
 
     FILE *f = fopen(fname, "r");
+    if (f == NULL)
+        EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not open %s\n", fname);
 
     int16_t read_bytes = fread(fr->buff, sizeof(char), fsize, f);
     if (ferror(f) != 0 | read_bytes != fsize)
@@ -28,6 +33,8 @@ FileReader *FileReader_init(char *fname, size_t fsize)
 
 void FileReader_free(FileReader *fr)
 {
+    assert(fr);
+
     free(fr->buff);
     free(fr);
 }
