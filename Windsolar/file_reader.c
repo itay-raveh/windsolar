@@ -2,6 +2,7 @@
 // Created by itay on 11/22/21.
 //
 #include <stdlib.h>
+#include <assert.h>
 #include "file_reader.h"
 #include "utils.h"
 #include "macros.h"
@@ -28,4 +29,20 @@ void FileReader_free(FileReader *fr)
 {
     free(fr->buff);
     free(fr);
+}
+
+char FileReader_peek(FileReader *fr, int k)
+{
+    assert(fr);
+    assert(k >= 0);
+    assert(fr->i + k < fr->fsize);
+
+    return fr->buff[fr->i + k];
+}
+
+char FileReader_consume(FileReader* fr, int k)
+{
+    char c = FileReader_peek(fr, k);
+    fr->i += k + 1;
+    return c;
 }
