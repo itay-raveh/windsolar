@@ -28,7 +28,7 @@ FileReader *FileReader_init(char *fname, size_t fsize);
  *
  * @param fr - FileReader to free
  */
-void FileReader_free(FileReader* fr);
+void FileReader_free(FileReader *fr);
 
 /**
  * Get the char k places after the current char.
@@ -37,7 +37,7 @@ void FileReader_free(FileReader* fr);
  * @param k
  * @return The k-th char
  */
-char FileReader_peek(FileReader* fr, int k);
+char FileReader_peek(FileReader *fr, int32_t k);
 
 /**
  * Get the char k places after current char and move the index to that place.
@@ -46,13 +46,13 @@ char FileReader_peek(FileReader* fr, int k);
  * @param k
  * @return The k-th
  */
-char FileReader_consume(FileReader* fr, int k);
+char FileReader_consume(FileReader *fr, int32_t k);
 
 /**
  * Checks if fr is at EOF
  * @param fr
  * @return 1 if EOF, else 0
  */
-int FileReader_isEOF(FileReader* fr);
+int FileReader_isEOF(FileReader *fr);
 
 #endif //WINDSOLAR_FILE_READER_H
