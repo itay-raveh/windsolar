@@ -5,26 +5,43 @@
 #include "macros.h"
 #include "file_reader.h"
 
-
-char *usage = "Usage: windsolar FILE\n"
-              "https://github.com/itay-raveh/windsolar\n";
-
-int main(int argc, char *argv[])
+/**
+ * Parse command line args.
+ * <br><br>
+ * Usage: windsolar FILE
+ * <br>
+ * --help - print usage and exit
+ * @param argc
+ * @param argv
+ * @return fname if one was found
+ */
+char *parse_args(const int argc, char *restrict argv[])
 {
-    // ~~~~~~~~~~~~~~~~~~ parse args ~~~~~~~~~~~~~~~~~~
+    char *usage = "Usage: windsolar FILE\n"
+                  "\n"
+                  "--help   -   print usage and exit\n"
+                  "https://github.com/itay-raveh/windsolar\n";
 
     if (argc != 2)
         EXIT_WITH_MSG(EXIT_FAILURE, "%s", usage);
 
-    // if argument is '--help' or '-h'
-    if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)
+    if (strcmp(argv[1], "--help") == 0)
         EXIT_WITH_MSG(EXIT_SUCCESS, "%s", usage);
 
-    char *fname = argv[1];
+    TRACE("input-file name: %s\n", argv[1]);
+    return argv[1];
+}
 
-    // ~~~~~~~~~~~~~~~~~ verify file ~~~~~~~~~~~~~~~~~~
-    TRACE("got file %s\n", fname);
-
+/**
+ * Verify that a given file:
+ *  <br>1. exists
+ *  <br>2. is readable
+ *  <br>3. is a regular file
+ * @param fname
+ * @return size of the file
+ */
+size_t verify_file(const char *fname)
+{
     // if the file does not exist
     if (access(fname, F_OK) != 0)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: File '%s' does not exist\n", fname);
@@ -32,9 +49,6 @@ int main(int argc, char *argv[])
     // if there are no read permissions for the file
     if (access(fname, R_OK) != 0)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: No permissions to read file '%s'\n", fname);
-
-    // ~~~~~~~~~~~~~~~~ get file stats ~~~~~~~~~~~~~~~~
-    TRACE("stating %s\n", fname);
 
     struct stat sb;
 
@@ -46,8 +60,16 @@ int main(int argc, char *argv[])
     if (!S_ISREG(sb.st_mode))
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: %s is not a regular file\n", fname);
 
-    FileReader *fr = FileReader_init(fname, sb.st_size);
-    
+    TRACE("input-file size: %ld\n", sb.st_size);
+    return sb.st_size;
+}
 
+
+int main(int argc, char *argv[])
+{
+    char *fname = parse_args(argc, argv);
+    size_t fsize = verify_file(fname);
+
+    FileReader *fr = FileReader_init(fname, fsize);
     FileReader_free(fr);
 }
