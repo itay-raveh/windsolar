@@ -54,3 +54,10 @@ char FileReader_consume(FileReader *fr, int32_t k)
     fr->i += k + 1;
     return c;
 }
+
+int FileReader_isEOF(FileReader *fr)
+{
+    assert(fr);
+
+    return fr->i == fr->fsize;
+}
