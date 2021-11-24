@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 
-typedef struct file_reader_t
+typedef struct
 {
-    char *buff;     // Holds the entire file.
+    char *buff;     // Holds the entire file
+    size_t fsize;   // The size of the file
     int i;          // Index of the last consumed char
 } FileReader;
 
