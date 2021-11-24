@@ -30,7 +30,7 @@ FileReader *FileReader_init(char *fname, size_t fsize);
 void FileReader_free(FileReader* fr);
 
 /**
- * Get the char k places after the fr->i.
+ * Get the char k places after the current char.
  *
  * @param fr
  * @param k
@@ -39,7 +39,7 @@ void FileReader_free(FileReader* fr);
 char FileReader_peek(FileReader* fr, int k);
 
 /**
- * Get the char k places after fr->i and move the index to that place.
+ * Get the char k places after current char and move the index to that place.
  *
  * @param fr
  * @param k
@@ -48,7 +48,7 @@ char FileReader_peek(FileReader* fr, int k);
 char FileReader_consume(FileReader* fr, int k);
 
 /**
- * Checks if fr->i is at EOF
+ * Checks if fr is at EOF
  * @param fr
  * @return 1 if EOF, else 0
  */
