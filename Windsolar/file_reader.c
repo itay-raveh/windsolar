@@ -55,7 +55,7 @@ char FileReader_consume(FileReader *fr, int32_t k)
     return c;
 }
 
-int FileReader_isEOF(FileReader *fr)
+int32_t FileReader_isEOF(FileReader *fr)
 {
     assert(fr);
 

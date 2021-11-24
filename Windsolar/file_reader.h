@@ -53,6 +53,6 @@ char FileReader_consume(FileReader *fr, int32_t k);
  * @param fr
  * @return 1 if EOF, else 0
  */
-int FileReader_isEOF(FileReader *fr);
+int32_t FileReader_isEOF(FileReader *fr);
 
 #endif //WINDSOLAR_FILE_READER_H
