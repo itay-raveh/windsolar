@@ -11,12 +11,13 @@ FileReader *FileReader_init(char *fname, size_t fsize)
 {
     FileReader *fr = malloc_s(sizeof(FileReader));
     fr->buff = malloc_s(fsize + 1); // +1 for \0
+    fr->fsize = fsize;
     fr->i = 0;
 
     FILE *f = fopen(fname, "r");
 
-    fread(fr->buff, sizeof(char), fsize, f);
-    if (ferror(f) != 0)
+    int16_t read_bytes = fread(fr->buff, sizeof(char), fsize, f);
+    if (ferror(f) != 0 | read_bytes != fsize)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not read from %s\n", fname);
 
     fr->buff[fsize] = '\0';
