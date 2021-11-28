@@ -6,6 +6,7 @@
 #define WINDSOLAR_MACROS_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef DEBUG
 #define TRACE(fmt, ...) do{fprintf(stderr, "[%s:%s\t:%3u]\t" fmt, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__);}while(0)
