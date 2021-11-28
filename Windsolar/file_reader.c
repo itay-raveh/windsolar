@@ -1,7 +1,8 @@
 //
 // Created by itay on 11/22/21.
 //
-#include <stdlib.h>
+
+#include <string.h>
 #include <assert.h>
 #include "file_reader.h"
 #include "utils.h"
@@ -10,6 +11,7 @@
 FileReader *FileReader_init(char *fname, size_t fsize)
 {
     assert(fname);
+    assert(strlen(fname) >= 1);
     assert(fsize >= 0);
 
     FileReader *fr = (FileReader *) malloc_s(sizeof(FileReader));
