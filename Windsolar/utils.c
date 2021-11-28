@@ -2,6 +2,7 @@
 // Created by itay on 11/18/21.
 //
 
+#include <stdlib.h>
 #include "utils.h"
 #include "macros.h"
 
