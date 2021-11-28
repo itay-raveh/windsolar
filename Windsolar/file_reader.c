@@ -2,11 +2,11 @@
 // Created by itay on 11/22/21.
 //
 
-#include <string.h>
-#include <assert.h>
+#include <string.h>         // strlen()
+#include <assert.h>         // assert()
 #include "file_reader.h"
-#include "utils.h"
-#include "macros.h"
+#include "utils.h"          // malloc_s()
+#include "macros.h"         // EXIT_WITH_MSG()
 
 FileReader *FileReader_init(char *fname, size_t fsize)
 {

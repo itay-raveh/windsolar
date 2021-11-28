@@ -2,9 +2,9 @@
 // Created by itay on 11/18/21.
 //
 
-#include <stdlib.h>
+#include <stdlib.h>     // malloc()
 #include "utils.h"
-#include "macros.h"
+#include "macros.h"     // EXIT_WITH_MSG()
 
 void *malloc_s(size_t size)
 {

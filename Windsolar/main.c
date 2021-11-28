@@ -1,9 +1,8 @@
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include "utils.h"
-#include "macros.h"
-#include "file_reader.h"
+#include <sys/stat.h>       // struct stat, stat(), S_ISREG
+#include <unistd.h>         // access(), F_OK, R_OK
+#include <string.h>         // strcmp
+#include "macros.h"         // EXIT_WITH_MSG()
+#include "file_reader.h"    // FileReader, FileReader_init(), FileReaderFree()
 
 /**
  * Parse command line args.
@@ -63,7 +62,6 @@ size_t verify_file(const char *fname)
     TRACE("input-file size: %ld\n", sb.st_size);
     return sb.st_size;
 }
-
 
 int main(int argc, char *argv[])
 {
