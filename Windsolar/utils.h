@@ -5,7 +5,7 @@
 #ifndef WINDSOLAR_UTILS_H
 #define WINDSOLAR_UTILS_H
 
-#include <stdlib.h>
+#include <stddef.h>
 
 /**
  * Safe malloc. will exit with error when allocation failes

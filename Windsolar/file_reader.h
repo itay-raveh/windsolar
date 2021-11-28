@@ -5,7 +5,8 @@
 #ifndef WINDSOLAR_FILE_READER_H
 #define WINDSOLAR_FILE_READER_H
 
-#include <stdio.h>
+#include <stddef.h>
+#include <inttypes.h>
 
 typedef struct
 {
