@@ -15,4 +15,6 @@
  */
 void *malloc_s(size_t size);
 
+#define MALLOC(T) (T*)malloc_s(sizeof(T))
+
 #endif //WINDSOLAR_UTILS_H
