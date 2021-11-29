@@ -35,17 +35,52 @@ typedef struct
     token_content_t content;
 } Token;
 
-
+/**
+ * Dynamically allocate a new Token and initialize the fields.
+ *
+ * @param type
+ * @param content
+ * @return ptr to Token
+ */
 Token *Token_init(token_type_t type, token_content_t content);
 
+/**
+ * Free a dynamically allocated Token
+ *
+ * @param t - Token to free
+ */
 void Token_free(Token *t);
 
+/**
+ * Check the type of a Token to determine if it's content is a char
+ *
+ * @param t - Token
+ * @return 1 if it is, otherwise 0
+ */
 int Token_isContentChr(Token *t);
 
+/**
+ * Check the type of a Token to determine if it's content is a string
+ *
+ * @param t - Token
+ * @return 1 if it is, otherwise 0
+ */
 int Token_isContentStr(Token *t);
 
+/**
+ * Check the type of a Token to determine if it's content is a number
+ *
+ * @param t - Token
+ * @return 1 if it is, otherwise 0
+ */
 int Token_isContentNum(Token *t);
 
+/**
+ * Check the type of a Token to determine if it's content is an action
+ *
+ * @param t - Token
+ * @return 1 if it is, otherwise 0
+ */
 int Token_isContentAction(Token *t);
 
 #endif //WINDSOLAR_TOKEN_H
