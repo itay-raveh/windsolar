@@ -2,7 +2,7 @@
 #include <unistd.h>         // access(), F_OK, R_OK
 #include <string.h>         // strcmp
 #include "macros.h"         // EXIT_WITH_MSG()
-#include "file_reader.h"    // FileReader, FileReader_init(), FileReaderFree()
+#include "tokenizer.h"
 
 /**
  * Parse command line args.
@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     char *fname = parse_args(argc, argv);
     size_t fsize = verify_file(fname);
 
-    FileReader *fr = FileReader_init(fname, fsize);
-    FileReader_free(fr);
+    Tokenizer *t = Tokenizer_init(fname, fsize);
+    puts(t->fr->buff);
+    Tokenizer_free(t);
 }
