@@ -2,10 +2,10 @@
 // Created by itay on 11/29/21.
 //
 
-#include <stdlib.h>
-#include <assert.h>
+#include <stdlib.h>     // free()
+#include <assert.h>     // assert()
 #include "token.h"
-#include "utils.h"
+#include "utils.h"      // MALLOC()
 
 
 Token *Token_init(token_type_t type, token_content_t content)
