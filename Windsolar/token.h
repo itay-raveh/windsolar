@@ -35,6 +35,11 @@ typedef struct
     token_content_t content;
 } Token;
 
+
+Token *Token_init(token_type_t type, token_content_t content);
+
+void Token_free(Token *t);
+
 int Token_isContentChr(Token *t);
 
 int Token_isContentStr(Token *t);
@@ -42,9 +47,5 @@ int Token_isContentStr(Token *t);
 int Token_isContentNum(Token *t);
 
 int Token_isContentAction(Token *t);
-
-Token *Token_init(token_type_t type, token_content_t content);
-
-void Token_free(Token *t);
 
 #endif //WINDSOLAR_TOKEN_H

@@ -7,6 +7,23 @@
 #include "token.h"
 #include "utils.h"
 
+
+Token *Token_init(token_type_t type, token_content_t content)
+{
+    Token *t = MALLOC(Token);
+    t->type = type;
+    t->content = content;
+    return t;
+}
+
+void Token_free(Token *t)
+{
+    assert(t);
+
+    if (Token_isContentStr(t)) free(t->content.str);
+    free(t);
+}
+
 int Token_isContentChr(Token *t)
 {
     assert(t);
@@ -60,20 +77,4 @@ int Token_isContentAction(Token *t)
         default:
             return 0;
     }
-}
-
-Token *Token_init(token_type_t type, token_content_t content)
-{
-    Token *t = MALLOC(Token);
-    t->type = type;
-    t->content = content;
-    return t;
-}
-
-void Token_free(Token *t)
-{
-    assert(t);
-
-    if (Token_isContentStr(t)) free(t->content.str);
-    free(t);
 }
