@@ -5,7 +5,7 @@
 #include <string.h>         // strlen()
 #include <assert.h>         // assert()
 #include "file_reader.h"
-#include "utils.h"          // malloc_s()
+#include "utils.h"          // MALLOC()
 #include "macros.h"         // EXIT_WITH_MSG()
 
 FileReader *FileReader_init(char *fname, size_t fsize)
@@ -14,7 +14,7 @@ FileReader *FileReader_init(char *fname, size_t fsize)
     assert(strlen(fname) >= 1);
     assert(fsize >= 0);
 
-    FileReader *fr = (FileReader *) malloc_s(sizeof(FileReader));
+    FileReader *fr = MALLOC(FileReader);
     fr->buff = malloc_s(fsize + 1); // +1 for \0
     fr->fsize = fsize;
     fr->i = 0;
