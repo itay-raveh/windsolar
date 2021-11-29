@@ -7,12 +7,14 @@
 #include <stdlib.h>     // free()
 #include "tokenizer.h"
 #include "utils.h"      // MALLOC()
+#include "macros.h"     // TRACE()
 
 Tokenizer *Tokenizer_init(char *fname, size_t fsize)
 {
     assert(fname);
     assert(strlen(fname) >= 1);
     assert(fsize >= 0);
+    TRACE("init Tokenizer with fname='%s' fsize=%lu\n", fname, fsize);
 
     Tokenizer *t = MALLOC(Tokenizer);
     t->fr = FileReader_init(fname, fsize);
@@ -22,6 +24,7 @@ Tokenizer *Tokenizer_init(char *fname, size_t fsize)
 void Tokenizer_free(Tokenizer *t)
 {
     assert(t);
+    TRACE("%s", "free Tokenizer\n");
 
     FileReader_free(t->fr);
     free(t);

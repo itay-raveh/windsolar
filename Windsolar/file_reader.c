@@ -13,6 +13,7 @@ FileReader *FileReader_init(char *fname, size_t fsize)
     assert(fname);
     assert(strlen(fname) >= 1);
     assert(fsize >= 0);
+    TRACE("init FileReader with fname='%s' fsize=%lu\n", fname, fsize);
 
     FileReader *fr = MALLOC(FileReader);
     fr->buff = malloc_s(fsize + 1); // +1 for \0
@@ -36,6 +37,7 @@ FileReader *FileReader_init(char *fname, size_t fsize)
 void FileReader_free(FileReader *fr)
 {
     assert(fr);
+    TRACE("%s", "free FileReader\n");
 
     free(fr->buff);
     free(fr);
@@ -60,6 +62,7 @@ char FileReader_consume(FileReader *fr, int32_t k)
 int32_t FileReader_isEOF(FileReader *fr)
 {
     assert(fr);
+    TRACE("%s", "reached EOF in file\n");
 
     return fr->i == fr->fsize;
 }
