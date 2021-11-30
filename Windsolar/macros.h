@@ -14,8 +14,8 @@
 #ifdef DEBUG
 #define TRACE(fmt, ...) do{ \
                         fprintf(stderr, \
-                            "[%s:%s:%3u]%*s" fmt, \
-                            __FILE__, __FUNCTION__, __LINE__, \
+                            "%s:%u:%s%*s" fmt, \
+                            __FILE__, __LINE__, __FUNCTION__,\
                             69 - (int)(strlen(__FILE__) + strlen(__FUNCTION__) + strlen(STR(__LINE__))), \
                             " ",\
                             __VA_ARGS__); \
