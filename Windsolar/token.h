@@ -44,6 +44,14 @@ typedef struct
  */
 Token *Token_init(token_type_t type, token_content_t content);
 
+
+/**
+ * A string representation of a token
+ * @param t - Token
+ * @return string describing token
+ */
+char *Token_str(Token *t);
+
 /**
  * Free a dynamically allocated Token
  *
