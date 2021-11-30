@@ -18,6 +18,8 @@ Tokenizer *Tokenizer_init(char *fname, size_t fsize)
 
     Tokenizer *t = MALLOC(Tokenizer);
     t->fr = FileReader_init(fname, fsize);
+    t->in_block = 0;
+    t->lineno = 1;
     return t;
 }
 
