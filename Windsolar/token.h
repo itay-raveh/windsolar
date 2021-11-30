@@ -25,7 +25,7 @@ typedef union
 {
     char chr;       // LPAR, RPAR, SEMICOL
     char *str;      // NAME or STR_LIT
-    int num;        // NUM_LIT
+    int32_t num;    // NUM_LIT
     action_t act;
 } token_content_t;
 
