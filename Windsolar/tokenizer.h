@@ -10,7 +10,9 @@
 
 typedef struct
 {
-    FileReader *fr;  // FileReader of file to tokenize
+    FileReader *fr;     // FileReader of file to tokenize
+    int in_block;       // is the tokenizer currently inside a command block
+    int lineno;         // line number
 } Tokenizer;
 
 /**
