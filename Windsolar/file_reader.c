@@ -62,7 +62,6 @@ char FileReader_consume(FileReader *fr, int32_t k)
 int32_t FileReader_isEOF(FileReader *fr)
 {
     assert(fr);
-    TRACE("%s", "reached EOF in file\n");
 
     return fr->i == fr->fsize;
 }
