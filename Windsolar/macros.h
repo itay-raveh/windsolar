@@ -9,14 +9,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STR(x) #x
+#define QUOTE(x) #x
+#define CHR_STR(c) ((char[2]){c, '\0'})
 
 #ifdef DEBUG
 #define TRACE(fmt, ...) do{ \
                         fprintf(stderr, \
                             "%s:%u:%s%*s" fmt, \
                             __FILE__, __LINE__, __FUNCTION__,\
-                            69 - (int)(strlen(__FILE__) + strlen(__FUNCTION__) + strlen(STR(__LINE__))), \
+                            69 - (int)(strlen(__FILE__) + strlen(__FUNCTION__) + strlen(QUOTE(__LINE__))), \
                             " ",\
                             __VA_ARGS__); \
                         }while(0)
