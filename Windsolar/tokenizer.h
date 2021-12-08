@@ -31,11 +31,14 @@ Tokenizer *Tokenizer_init(FileReader *fr);
 void Tokenizer_free(Tokenizer *t);
 
 /**
- * Get the next token from the file
+ * Get the next token from the file.
+ * Return the token type, and set the pointers to the start and end of it in the buffer.
  *
  * @param t - Tokenizer
- * @return Token, or NULL when reached EOF
+ * @param p_start - Some char **ptr
+ * @param p_end - Some char **ptr
+ * @return Token type
  */
-Token *Tokenizer_next(Tokenizer *t);
+Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end);
 
 #endif //WINDSOLAR_TOKENIZER_H
