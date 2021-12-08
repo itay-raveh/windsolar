@@ -114,7 +114,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
 
         while (isdigit(FileReader_consume(t->fr, 0)));
 
-        *p_end = &(t->fr->buff[t->fr->i]);
+        *p_end = &(t->fr->buff[t->fr->i - 1]);
         return NUMBER;
     }
 
@@ -137,7 +137,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
 
         while (isalpha(FileReader_consume(t->fr, 0)));
 
-        *p_end = &(t->fr->buff[t->fr->i]);
+        *p_end = &(t->fr->buff[t->fr->i - 1]);
         return CMD;
     }
 
