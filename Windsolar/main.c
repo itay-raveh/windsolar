@@ -2,6 +2,7 @@
 #include <unistd.h>         // access(), F_OK, R_OK
 #include <string.h>         // strcmp
 #include "macros.h"         // EXIT_WITH_MSG()
+#include "utils.h"
 #include "tokenizer.h"
 
 /**
@@ -68,7 +69,23 @@ int main(int argc, char *argv[])
     char *fname = parse_args(argc, argv);
     size_t fsize = verify_file(fname);
 
-    Tokenizer *t = Tokenizer_init(fname, fsize);
-    puts(t->fr->buff);
+    Tokenizer *t = Tokenizer_init(FileReader_init(fname, fsize));
+
+    char *p_start, *p_end;
+    Token tok_type;
+
+    do
+    {
+        if (EOF == (tok_type = Tokenizer_next(t, &p_start, &p_end))) break;
+
+        size_t len = (p_start != NULL && p_end != NULL) ? p_end - p_start : 0;
+        char *str = (char *) malloc_s(len + 1);
+        if (len > 0)
+            strncpy(str, p_start, len);
+        str[len] = '\0';
+
+        printf("%s: %s\n", token_names[tok_type], str);
+    } while (!FileReader_isEOF(t->fr));
+
     Tokenizer_free(t);
 }
