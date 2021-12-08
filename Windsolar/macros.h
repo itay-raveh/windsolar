@@ -10,7 +10,6 @@
 #include <string.h>
 
 #define QUOTE(x) #x
-#define CHR_STR(c) ((char[2]){c, '\0'})
 
 #ifdef DEBUG
 #define TRACE(fmt, ...) do{ \
