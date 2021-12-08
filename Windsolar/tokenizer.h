@@ -10,19 +10,18 @@
 
 typedef struct
 {
-    FileReader *fr;     // FileReader of file to tokenize
-    int in_block;       // is the tokenizer currently inside a command block
-    int lineno;         // line number
+    FileReader *fr;         // FileReader of file to tokenize
+    int32_t in_block;       // is the tokenizer currently inside a command block
+    int32_t lineno;         // line number
 } Tokenizer;
 
 /**
  * Dynamically allocate a Tokenizer and initialize the fields
  *
- * @param fname - file to read from
- * @param fsize - size of file to read from
+ * @param fr - FileReader to read from
  * @return ptr to Tokenizer
  */
-Tokenizer *Tokenizer_init(char *fname, size_t fsize);
+Tokenizer *Tokenizer_init(FileReader *fr);
 
 /**
  * Free a dynamically allocated Tokenizer
