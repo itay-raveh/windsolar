@@ -15,7 +15,7 @@ FileReader *FileReader_init(char *fname, size_t fsize)
     assert(fsize >= 0);
     TRACE("init FileReader with fname='%s' fsize=%lu\n", fname, fsize);
 
-    FileReader *fr = MALLOC(FileReader);
+    FileReader *fr = NEW(FileReader);
     fr->buff = malloc_s(fsize + 1); // +1 for \0
     fr->fsize = fsize;
     fr->curr = 0;

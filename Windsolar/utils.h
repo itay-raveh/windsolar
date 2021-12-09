@@ -15,7 +15,7 @@
  */
 void *malloc_s(size_t size);
 
-#define MALLOC(T) (T*)malloc_s(sizeof(T))
+#define NEW(T) (T*)malloc_s(sizeof(T))
 
 /**
  * strcat but with a char as the source

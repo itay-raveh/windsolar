@@ -17,7 +17,7 @@ Tokenizer *Tokenizer_init(FileReader *fr)
     assert(fr);
     TRACE("%s", "init Tokenizer\n");
 
-    Tokenizer *t = MALLOC(Tokenizer);
+    Tokenizer *t = NEW(Tokenizer);
     t->fr = fr;
     t->in_block = 0;
     return t;
