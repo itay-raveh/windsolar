@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
             strncpy(str, p_start, len);
         str[len] = '\0';
 
-        printf("%s: %s\n", token_names[tok_type], str);
+        printf("%2d,%3lu-%3d:\t\t%-10s\t%s\n", t->fr->lineno, t->fr->charno - len, t->fr->charno - 1,
+               token_names[tok_type], str);
     } while (!FileReader_isEOF(t->fr));
 
     Tokenizer_free(t);

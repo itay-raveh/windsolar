@@ -20,7 +20,6 @@ Tokenizer *Tokenizer_init(FileReader *fr)
     Tokenizer *t = MALLOC(Tokenizer);
     t->fr = fr;
     t->in_block = 0;
-    t->lineno = 1;
     return t;
 }
 
@@ -51,8 +50,6 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
     // skip leading spaces
     while (isspace(FileReader_peek(t->fr, 0)))
     {
-        if ('\n' == FileReader_peek(t->fr, 0))
-            t->lineno++;
         FileReader_consume(t->fr, 0);
         if(FileReader_isEOF(t->fr)) return EOF;
     }
@@ -62,7 +59,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
         // LPAR
         if ('(' == FileReader_peek(t->fr, 0))
         {
-            *p_start = &(t->fr->buff[t->fr->i]);
+            *p_start = &(t->fr->buff[t->fr->curr]);
             *p_end = *p_start + 1;
             FileReader_consume(t->fr, 0);
             t->in_block = 1;
@@ -73,7 +70,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
         if (islabel(FileReader_peek(t->fr, 0)))
         {
 
-            *p_start = &(t->fr->buff[t->fr->i]);
+            *p_start = &(t->fr->buff[t->fr->curr]);
 
             int32_t len = 0;
             while (islabel(FileReader_consume(t->fr, 0))) len++;
@@ -81,7 +78,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
             if (len >= MAX_STR_LEN)
                 EXIT_WITH_MSG(EXIT_FAILURE, "Error: labels or strings longer than %d chars not allowed\n", MAX_STR_LEN);
 
-            *p_end = &(t->fr->buff[t->fr->i]);
+            *p_end = &(t->fr->buff[t->fr->curr]);
             return LABEL;
         }
 
@@ -91,7 +88,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
     // RPAR
     if (')' == FileReader_peek(t->fr, 0))
     {
-        *p_start = &(t->fr->buff[t->fr->i]);
+        *p_start = &(t->fr->buff[t->fr->curr]);
         *p_end = *p_start + 1;
         FileReader_consume(t->fr, 0);
         t->in_block = 0;
@@ -101,7 +98,7 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
     // SEMICOL
     if (';' == FileReader_peek(t->fr, 0))
     {
-        *p_start = &(t->fr->buff[t->fr->i]);
+        *p_start = &(t->fr->buff[t->fr->curr]);
         *p_end = *p_start + 1;
         FileReader_consume(t->fr, 0);
         return SEMICOL;
@@ -110,34 +107,34 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
     // NUMBER
     if (isdigit(FileReader_peek(t->fr, 0)))
     {
-        *p_start = &(t->fr->buff[t->fr->i]);
+        *p_start = &(t->fr->buff[t->fr->curr]);
 
         while (isdigit(FileReader_peek(t->fr, 0))) FileReader_consume(t->fr, 0);
 
-        *p_end = &(t->fr->buff[t->fr->i]);
+        *p_end = &(t->fr->buff[t->fr->curr]);
         return NUMBER;
     }
 
     // STRING
     if ('"' == FileReader_peek(t->fr, 0))
     {
-        *p_start = &(t->fr->buff[t->fr->i]);
+        *p_start = &(t->fr->buff[t->fr->curr]);
 
         FileReader_consume(t->fr, 0);
         while ('"' != FileReader_consume(t->fr, 0));
 
-        *p_end = &(t->fr->buff[t->fr->i]);
+        *p_end = &(t->fr->buff[t->fr->curr]);
         return STRING;
     }
 
     // CMD
     if (isalpha(FileReader_peek(t->fr, 0)))
     {
-        *p_start = &(t->fr->buff[t->fr->i]);
+        *p_start = &(t->fr->buff[t->fr->curr]);
 
         while (isalpha(FileReader_peek(t->fr, 0))) FileReader_consume(t->fr, 0);
 
-        *p_end = &(t->fr->buff[t->fr->i]);
+        *p_end = &(t->fr->buff[t->fr->curr]);
         return CMD;
     }
 

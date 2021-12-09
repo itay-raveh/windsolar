@@ -12,7 +12,9 @@ typedef struct
 {
     char *buff;     // Holds the entire file
     size_t fsize;   // The size of the file
-    int i;          // Index of the last consumed char
+    int32_t curr;   // Current char index, relative to file start
+    int32_t charno; // Current char index, relative to start of current line
+    int32_t lineno; // Line number
 } FileReader;
 
 /**

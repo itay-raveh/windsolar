@@ -18,7 +18,9 @@ FileReader *FileReader_init(char *fname, size_t fsize)
     FileReader *fr = MALLOC(FileReader);
     fr->buff = malloc_s(fsize + 1); // +1 for \0
     fr->fsize = fsize;
-    fr->i = 0;
+    fr->curr = 0;
+    fr->lineno = 1;
+    fr->charno = 1;
 
     FILE *f = fopen(fname, "r");
     if (f == NULL)
@@ -47,15 +49,20 @@ char FileReader_peek(FileReader *fr, int32_t k)
 {
     assert(fr);
     assert(k >= 0);
-    assert(fr->i + k < fr->fsize);
+    assert(fr->curr + k < fr->fsize);
 
-    return fr->buff[fr->i + k];
+    return fr->buff[fr->curr + k];
 }
 
 char FileReader_consume(FileReader *fr, int32_t k)
 {
     char c = FileReader_peek(fr, k);
-    fr->i += k + 1;
+    fr->curr += k + 1;
+    if (c == '\n')
+    {
+        fr->lineno += 1;
+        fr->charno = 1;
+    } else fr->charno += k + 1;
     return c;
 }
 
@@ -63,5 +70,5 @@ int32_t FileReader_isEOF(FileReader *fr)
 {
     assert(fr);
 
-    return fr->i == fr->fsize;
+    return fr->curr == fr->fsize;
 }
