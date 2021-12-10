@@ -42,32 +42,32 @@ Token Tokenizer_next(Tokenizer *t, char **str, size_t *len)
 {
     assert(t);
 
-    if (FileReader_isEOF(t->fr)) return EOF;
+    char c;
 
     // skip leading spaces
-    while (isspace(FileReader_peek(t->fr, 0)))
-        FileReader_consume(t->fr, 0);
+    do
+    {
+        c = FileReader_consume(t->fr, 0);
+        if (c == '\0') return EOF;
+    } while (isspace(c));
 
     if (!t->in_block)
     {
         // LPAR
-        if ('(' == FileReader_peek(t->fr, 0))
+        if (c == '(')
         {
             t->in_block = 1;
-
-            *str = &(t->fr->buff[t->fr->curr]);
-            FileReader_consume(t->fr, 0);
+            *str = &(t->fr->buff[t->fr->curr - 1]);
             *len = 1;
             return LPAR;
         }
 
         // LABEL
-        if (islabel(FileReader_peek(t->fr, 0)))
+        if (islabel(c))
         {
+            *str = &(t->fr->buff[t->fr->curr - 1]);
 
-            *str = &(t->fr->buff[t->fr->curr]);
-
-            *len = 0;
+            *len = 1;
             while (islabel(FileReader_consume(t->fr, 0))) (*len)++;
 
             if (*len >= MAX_STR_LEN)
@@ -81,31 +81,29 @@ Token Tokenizer_next(Tokenizer *t, char **str, size_t *len)
     }
 
     // RPAR
-    if (')' == FileReader_peek(t->fr, 0))
+    if (c == ')')
     {
         t->in_block = 0;
 
-        *str = &(t->fr->buff[t->fr->curr]);
-        FileReader_consume(t->fr, 0);
+        *str = &(t->fr->buff[t->fr->curr - 1]);
         *len = 1;
         return RPAR;
     }
 
     // SEMICOL
-    if (';' == FileReader_peek(t->fr, 0))
+    if (c == ';')
     {
-        *str = &(t->fr->buff[t->fr->curr]);
-        FileReader_consume(t->fr, 0);
+        *str = &(t->fr->buff[t->fr->curr - 1]);
         *len = 1;
         return SEMICOL;
     }
 
     // NUMBER
-    if (isdigit(FileReader_peek(t->fr, 0)))
+    if (isdigit(c))
     {
-        *str = &(t->fr->buff[t->fr->curr]);
+        *str = &(t->fr->buff[t->fr->curr - 1]);
 
-        *len = 0;
+        *len = 1;
         while (isdigit(FileReader_consume(t->fr, 0)))
             (*len)++;
 
@@ -113,10 +111,8 @@ Token Tokenizer_next(Tokenizer *t, char **str, size_t *len)
     }
 
     // STRING
-    if ('"' == FileReader_peek(t->fr, 0))
+    if (c == '"')
     {
-        FileReader_consume(t->fr, 0);
-
         *str = &(t->fr->buff[t->fr->curr]);
         *len = 0;
         while ('"' != FileReader_consume(t->fr, 0)) (*len)++;
@@ -125,15 +121,15 @@ Token Tokenizer_next(Tokenizer *t, char **str, size_t *len)
     }
 
     // CMD
-    if (isalpha(FileReader_peek(t->fr, 0)))
+    if (isalpha(c))
     {
-        *str = &(t->fr->buff[t->fr->curr]);
-        *len = 0;
+        *str = &(t->fr->buff[t->fr->curr - 1]);
+        *len = 1;
         while (isalpha(FileReader_consume(t->fr, 0))) (*len)++;
 
         return CMD;
     }
 
-    EXIT_WITH_MSG(EXIT_FAILURE, "Error: %d, %d: unexpected char '%c' in program block\n", t->fr->lineno,
-                  t->fr->charno, FileReader_peek(t->fr, 0));
+    EXIT_WITH_MSG(EXIT_FAILURE, "Error: %d, %d: unexpected char '%c' in program block\n", t->fr->lineno, t->fr->charno,
+                  FileReader_peek(t->fr, 0));
 }
