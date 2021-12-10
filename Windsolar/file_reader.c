@@ -49,7 +49,7 @@ char FileReader_peek(FileReader *fr, int32_t k)
 {
     assert(fr);
     assert(k >= 0);
-    assert(fr->curr + k < fr->fsize);
+    assert(fr->curr + k <= fr->fsize);
 
     return fr->buff[fr->curr + k];
 }
@@ -70,5 +70,5 @@ int32_t FileReader_isEOF(FileReader *fr)
 {
     assert(fr);
 
-    return fr->curr == fr->fsize;
+    return fr->curr >= fr->fsize;
 }
