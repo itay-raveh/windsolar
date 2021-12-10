@@ -71,21 +71,22 @@ int main(int argc, char *argv[])
 
     Tokenizer *t = Tokenizer_init(FileReader_init(fname, fsize));
 
-    char *p_start, *p_end;
+    char *str;
+    size_t len;
     Token tok_type;
 
     do
     {
-        if (EOF == (tok_type = Tokenizer_next(t, &p_start, &p_end))) break;
+        if (EOF == (tok_type = Tokenizer_next(t, &str, &len))) break;
 
-        size_t len = (p_start != NULL && p_end != NULL) ? p_end - p_start : 0;
-        char *str = (char *) malloc_s(len + 1);
+        char *_str = (char *) malloc_s(len + 1);
         if (len > 0)
-            strncpy(str, p_start, len);
-        str[len] = '\0';
+            strncpy(_str, str, len);
+        _str[len] = '\0';
 
         printf("%2d,%3lu-%3d:\t\t%-10s\t%s\n", t->fr->lineno, t->fr->charno - len, t->fr->charno - 1,
-               token_names[tok_type], str);
+               token_names[tok_type], _str);
+        free(_str);
     } while (!FileReader_isEOF(t->fr));
 
     Tokenizer_free(t);

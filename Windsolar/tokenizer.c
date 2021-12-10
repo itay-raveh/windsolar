@@ -7,7 +7,7 @@
 #include <stdlib.h>     // free()
 #include <ctype.h>      // isspace(), isalpha()
 #include "tokenizer.h"
-#include "utils.h"      // MALLOC()
+#include "utils.h"      // NEW()
 #include "macros.h"     // TRACE(), EXIT_WITH_MSG()
 
 #define MAX_STR_LEN 1000
@@ -38,31 +38,26 @@ int islabel(char c)
 }
 
 
-Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
+Token Tokenizer_next(Tokenizer *t, char **str, size_t *len)
 {
     assert(t);
-    assert(!FileReader_isEOF(t->fr));
 
-    if(FileReader_isEOF(t->fr)) return EOF;
-
-    *p_start = *p_end = NULL;
+    if (FileReader_isEOF(t->fr)) return EOF;
 
     // skip leading spaces
     while (isspace(FileReader_peek(t->fr, 0)))
-    {
         FileReader_consume(t->fr, 0);
-        if(FileReader_isEOF(t->fr)) return EOF;
-    }
 
     if (!t->in_block)
     {
         // LPAR
         if ('(' == FileReader_peek(t->fr, 0))
         {
-            *p_start = &(t->fr->buff[t->fr->curr]);
-            *p_end = *p_start + 1;
-            FileReader_consume(t->fr, 0);
             t->in_block = 1;
+
+            *str = &(t->fr->buff[t->fr->curr]);
+            FileReader_consume(t->fr, 0);
+            *len = 1;
             return LPAR;
         }
 
@@ -70,74 +65,75 @@ Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end)
         if (islabel(FileReader_peek(t->fr, 0)))
         {
 
-            *p_start = &(t->fr->buff[t->fr->curr]);
+            *str = &(t->fr->buff[t->fr->curr]);
 
-            int32_t len = 0;
-            while (islabel(FileReader_consume(t->fr, 0))) len++;
+            *len = 0;
+            while (islabel(FileReader_consume(t->fr, 0))) (*len)++;
 
-            if (len >= MAX_STR_LEN)
+            if (*len >= MAX_STR_LEN)
                 EXIT_WITH_MSG(EXIT_FAILURE, "Error: labels or strings longer than %d chars not allowed\n", MAX_STR_LEN);
 
-            *p_end = &(t->fr->buff[t->fr->curr]);
             return LABEL;
         }
 
-        EXIT_WITH_MSG(EXIT_FAILURE, "Error: only labels are allowed outside of blocks (line %d)\n", t->lineno);
+        EXIT_WITH_MSG(EXIT_FAILURE, "Error: %d, %d: only labels (comprised only of alphabetic chars, '-'s and '_'s)"
+                                    " are allowed outside of blocks\n", t->fr->lineno, t->fr->charno);
     }
 
     // RPAR
     if (')' == FileReader_peek(t->fr, 0))
     {
-        *p_start = &(t->fr->buff[t->fr->curr]);
-        *p_end = *p_start + 1;
-        FileReader_consume(t->fr, 0);
         t->in_block = 0;
+
+        *str = &(t->fr->buff[t->fr->curr]);
+        FileReader_consume(t->fr, 0);
+        *len = 1;
         return RPAR;
     }
 
     // SEMICOL
     if (';' == FileReader_peek(t->fr, 0))
     {
-        *p_start = &(t->fr->buff[t->fr->curr]);
-        *p_end = *p_start + 1;
+        *str = &(t->fr->buff[t->fr->curr]);
         FileReader_consume(t->fr, 0);
+        *len = 1;
         return SEMICOL;
     }
 
     // NUMBER
     if (isdigit(FileReader_peek(t->fr, 0)))
     {
-        *p_start = &(t->fr->buff[t->fr->curr]);
+        *str = &(t->fr->buff[t->fr->curr]);
 
-        while (isdigit(FileReader_peek(t->fr, 0))) FileReader_consume(t->fr, 0);
+        *len = 0;
+        while (isdigit(FileReader_consume(t->fr, 0)))
+            (*len)++;
 
-        *p_end = &(t->fr->buff[t->fr->curr]);
         return NUMBER;
     }
 
     // STRING
     if ('"' == FileReader_peek(t->fr, 0))
     {
-        *p_start = &(t->fr->buff[t->fr->curr]);
-
         FileReader_consume(t->fr, 0);
-        while ('"' != FileReader_consume(t->fr, 0));
 
-        *p_end = &(t->fr->buff[t->fr->curr]);
+        *str = &(t->fr->buff[t->fr->curr]);
+        *len = 0;
+        while ('"' != FileReader_consume(t->fr, 0)) (*len)++;
+
         return STRING;
     }
 
     // CMD
     if (isalpha(FileReader_peek(t->fr, 0)))
     {
-        *p_start = &(t->fr->buff[t->fr->curr]);
+        *str = &(t->fr->buff[t->fr->curr]);
+        *len = 0;
+        while (isalpha(FileReader_consume(t->fr, 0))) (*len)++;
 
-        while (isalpha(FileReader_peek(t->fr, 0))) FileReader_consume(t->fr, 0);
-
-        *p_end = &(t->fr->buff[t->fr->curr]);
         return CMD;
     }
 
-    EXIT_WITH_MSG(EXIT_FAILURE, "Error: unexpected char '%c' in program block (line %d)\n", FileReader_peek(t->fr, 0),
-                  t->lineno);
+    EXIT_WITH_MSG(EXIT_FAILURE, "Error: %d, %d: unexpected char '%c' in program block\n", t->fr->lineno,
+                  t->fr->charno, FileReader_peek(t->fr, 0));
 }

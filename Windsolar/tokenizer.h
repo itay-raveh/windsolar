@@ -12,7 +12,6 @@ typedef struct
 {
     FileReader *fr;         // FileReader of file to tokenize
     int32_t in_block;       // is the tokenizer currently inside a command block
-    int32_t lineno;         // line number
 } Tokenizer;
 
 /**
@@ -35,10 +34,10 @@ void Tokenizer_free(Tokenizer *t);
  * Return the token type, and set the pointers to the start and end of it in the buffer.
  *
  * @param t - Tokenizer
- * @param p_start - Some char **ptr
- * @param p_end - Some char **ptr
+ * @param str - At return this will point to the start of the token
+ * @param len - At return this will be the length of the token
  * @return Token type
  */
-Token Tokenizer_next(Tokenizer *t, char **p_start, char **p_end);
+Token Tokenizer_next(Tokenizer *t, char **str, size_t *len);
 
 #endif //WINDSOLAR_TOKENIZER_H
