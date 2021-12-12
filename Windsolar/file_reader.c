@@ -5,7 +5,7 @@
 #include <string.h>         // strlen()
 #include <assert.h>         // assert()
 #include "file_reader.h"
-#include "utils.h"          // MALLOC()
+#include "utils.h"          // NEW()
 #include "macros.h"         // EXIT_WITH_MSG()
 
 FileReader *FileReader_init(char *fname, size_t fsize)
