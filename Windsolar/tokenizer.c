@@ -5,7 +5,7 @@
 #include <assert.h>     // assert()
 #include <string.h>     // strlen()
 #include <stdlib.h>     // free()
-#include <ctype.h>      // isspace(), isalpha()
+#include <ctype.h>      // isspace(), isalpha(), isdigit()
 #include "tokenizer.h"
 #include "utils.h"      // NEW()
 #include "macros.h"     // TRACE(), EXIT_WITH_MSG()
@@ -44,12 +44,24 @@ Token Tokenizer_next(Tokenizer *t, char **str, size_t *len)
 
     char c;
 
-    // skip leading spaces
+    skip_spaces:
     do
     {
         c = FileReader_consume(t->fr, 0);
-        if (c == '\0') return EOF;
     } while (isspace(c));
+
+    // skip comments
+    if (c == '#')
+    {
+        do
+        {
+            c = FileReader_consume(t->fr, 0);
+        } while (c != '#' && c != '\0');
+        if (c != '\0') goto skip_spaces;
+    }
+
+    // check for EOF
+    if (c == '\0') return EOF;
 
     if (!t->in_block)
     {
