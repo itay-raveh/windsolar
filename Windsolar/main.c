@@ -1,9 +1,9 @@
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
+#include <sys/stat.h>       // struct stat, stat(), S_ISREG
+#include <unistd.h>         // access(), F_OK, R_OK
+#include <string.h>         // strcmp
+#include "macros.h"         // EXIT_WITH_MSG()
 #include "utils.h"
-#include "macros.h"
-#include "file_reader.h"
+#include "tokenizer.h"
 
 /**
  * Parse command line args.
@@ -64,12 +64,30 @@ size_t verify_file(const char *fname)
     return sb.st_size;
 }
 
-
 int main(int argc, char *argv[])
 {
     char *fname = parse_args(argc, argv);
     size_t fsize = verify_file(fname);
 
-    FileReader *fr = FileReader_init(fname, fsize);
-    FileReader_free(fr);
+    Tokenizer *t = Tokenizer_init(FileReader_init(fname, fsize));
+
+    char *str;
+    size_t len;
+    Token tok_type;
+
+    do
+    {
+        if (EOF == (tok_type = Tokenizer_next(t, &str, &len))) break;
+
+        char *_str = (char *) malloc_s(len + 1);
+        if (len > 0)
+            strncpy(_str, str, len);
+        _str[len] = '\0';
+
+        printf("%2d,%3lu-%3d:\t\t%-10s\t%s\n", t->fr->lineno, t->fr->charno - len, t->fr->charno - 1,
+               token_names[tok_type], _str);
+        free(_str);
+    } while (!FileReader_isEOF(t->fr));
+
+    Tokenizer_free(t);
 }

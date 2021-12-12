@@ -1,21 +1,26 @@
 //
 // Created by itay on 11/22/21.
 //
-#include <stdlib.h>
-#include <assert.h>
+
+#include <string.h>         // strlen()
+#include <assert.h>         // assert()
 #include "file_reader.h"
-#include "utils.h"
-#include "macros.h"
+#include "utils.h"          // NEW()
+#include "macros.h"         // EXIT_WITH_MSG()
 
 FileReader *FileReader_init(char *fname, size_t fsize)
 {
     assert(fname);
+    assert(strlen(fname) >= 1);
     assert(fsize >= 0);
+    TRACE("init FileReader with fname='%s' fsize=%lu\n", fname, fsize);
 
-    FileReader *fr = (FileReader *) malloc_s(sizeof(FileReader));
+    FileReader *fr = NEW(FileReader);
     fr->buff = malloc_s(fsize + 1); // +1 for \0
     fr->fsize = fsize;
-    fr->i = 0;
+    fr->curr = 0;
+    fr->lineno = 1;
+    fr->charno = 1;
 
     FILE *f = fopen(fname, "r");
     if (f == NULL)
@@ -34,6 +39,7 @@ FileReader *FileReader_init(char *fname, size_t fsize)
 void FileReader_free(FileReader *fr)
 {
     assert(fr);
+    TRACE("%s", "free FileReader\n");
 
     free(fr->buff);
     free(fr);
@@ -43,15 +49,20 @@ char FileReader_peek(FileReader *fr, int32_t k)
 {
     assert(fr);
     assert(k >= 0);
-    assert(fr->i + k < fr->fsize);
+    assert(fr->curr + k <= fr->fsize);
 
-    return fr->buff[fr->i + k];
+    return fr->buff[fr->curr + k];
 }
 
 char FileReader_consume(FileReader *fr, int32_t k)
 {
     char c = FileReader_peek(fr, k);
-    fr->i += k + 1;
+    fr->curr += k + 1;
+    if (c == '\n')
+    {
+        fr->lineno += 1;
+        fr->charno = 1;
+    } else fr->charno += k + 1;
     return c;
 }
 
@@ -59,5 +70,5 @@ int32_t FileReader_isEOF(FileReader *fr)
 {
     assert(fr);
 
-    return fr->i == fr->fsize;
+    return fr->curr >= fr->fsize;
 }

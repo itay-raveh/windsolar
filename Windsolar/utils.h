@@ -5,14 +5,23 @@
 #ifndef WINDSOLAR_UTILS_H
 #define WINDSOLAR_UTILS_H
 
-#include <stdlib.h>
+#include <stddef.h>     // size_t
 
 /**
- * Safe malloc. will exit with error when allocation failes
+ * Safe malloc. will exit with error when allocation fails
  *
  * @param size - size of new memory block
  * @return ptr to memory block
  */
 void *malloc_s(size_t size);
+
+#define NEW(T) (T*)malloc_s(sizeof(T))
+
+/**
+ * strcat but with a char as the source
+ * @param dst
+ * @param c
+ */
+void strcatc(char *restrict dst, char c);
 
 #endif //WINDSOLAR_UTILS_H

@@ -6,9 +6,20 @@
 #define WINDSOLAR_MACROS_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define QUOTE(x) #x
 
 #ifdef DEBUG
-#define TRACE(fmt, ...) do{fprintf(stderr, "[%s:%s\t:%3u]\t" fmt, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__);}while(0)
+#define TRACE(fmt, ...) do{ \
+                        fprintf(stderr, \
+                            "%s:%u:%s%*s" fmt, \
+                            __FILE__, __LINE__, __FUNCTION__,\
+                            69 - (int)(strlen(__FILE__) + strlen(__FUNCTION__) + strlen(QUOTE(__LINE__))), \
+                            " ",\
+                            __VA_ARGS__); \
+                        }while(0)
 #else
 #define TRACE(fmt, ...)
 #endif
