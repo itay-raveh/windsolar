@@ -27,12 +27,12 @@ FileReader *FileReader_init(char *fname, size_t fsize)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not open %s\n", fname);
 
     size_t read_bytes = fread(fr->buff, sizeof(char), fsize, f);
-    if (ferror(f) != 0 | read_bytes != fsize)
+    fclose(f);
+
+    if (ferror(f) != 0 || read_bytes != fsize)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not read from %s\n", fname);
 
     fr->buff[fsize] = '\0';
-    fclose(f);
-
     return fr;
 }
 
