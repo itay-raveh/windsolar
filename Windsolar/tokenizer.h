@@ -8,10 +8,24 @@
 #include "file_reader.h"
 #include "token.h"
 
+typedef enum
+{
+    OK = 0, UNEXPECTED_CHAR = 1, UNCLOSED_STRING = 2, UNCLOSED_COMMENT = 3
+} Tokenizer_error;
+
+/**
+ * String description of error
+ */
+char *Tokenizer_error_desc(Tokenizer_error te);
+
 typedef struct
 {
     FileReader *fr;         // FileReader of file to tokenize
-    int32_t in_block;       // is the tokenizer currently inside a command block
+    int32_t in_block;       // Is the tokenizer currently inside a command block
+    Token token;            // Current token type
+    char *str;              // Start of current token
+    size_t len;             // Length of the current token
+    Tokenizer_error err;    // Error type for when one is found
 } Tokenizer;
 
 /**
@@ -30,14 +44,11 @@ Tokenizer *Tokenizer_init(FileReader *fr);
 void Tokenizer_free(Tokenizer *t);
 
 /**
- * Get the next token from the file.
- * Return the token type, and set the pointers to the start and end of it in the buffer.
+ * Get the next token from the input.
  *
  * @param t - Tokenizer
- * @param str - At return this will point to the start of the token
- * @param len - At return this will be the length of the token
- * @return Token type
+ * @return 1 on success, 0 on error
  */
-Token Tokenizer_next(Tokenizer *t, char **str, size_t *len);
+int32_t Tokenizer_next(Tokenizer *t);
 
 #endif //WINDSOLAR_TOKENIZER_H

@@ -71,23 +71,24 @@ int main(int argc, char *argv[])
 
     Tokenizer *t = Tokenizer_init(FileReader_init(fname, fsize));
 
-    char *str;
-    size_t len;
-    Token tok_type;
-
-    do
+    while (Tokenizer_next(t))
     {
-        if (EOF == (tok_type = Tokenizer_next(t, &str, &len))) break;
+        char *str = (char *) malloc_s(t->len + 1);
+        if (t->len > 0)
+            strncpy(str, t->str, t->len);
+        str[t->len] = '\0';
 
-        char *_str = (char *) malloc_s(len + 1);
-        if (len > 0)
-            strncpy(_str, str, len);
-        _str[len] = '\0';
+        printf("%2d,%3lu-%3d:\t\t%-10s\t%s\n", t->fr->lineno, t->fr->charno - t->len, t->fr->charno - 1,
+               token_names[t->token], str);
 
-        printf("%2d,%3lu-%3d:\t\t%-10s\t%s\n", t->fr->lineno, t->fr->charno - len, t->fr->charno - 1,
-               token_names[tok_type], _str);
-        free(_str);
-    } while (!FileReader_isEOF(t->fr));
+        free(str);
+
+        if (t->token == ENDMARKER) break;
+    }
+
+    if (t->err)
+        printf("Syntax Error: %d, %lu ('%c'): %s\n", t->fr->lineno, t->fr->charno - t->len,
+               t->fr->buff[t->fr->curr - t->len + 1], Tokenizer_error_desc(t->err));
 
     Tokenizer_free(t);
 }
