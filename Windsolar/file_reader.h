@@ -10,11 +10,12 @@
 
 typedef struct
 {
-    char *buff;     // Holds the entire file
-    size_t fsize;   // The size of the file
-    int32_t curr;   // Current char index, relative to file start
-    int32_t charno; // Current char index, relative to start of current line
-    int32_t lineno; // Line number
+    char *buff;             // Holds the entire file
+    size_t fsize;           // The size of the file
+    int32_t curr;           // Current char index, relative to file start
+    int32_t charno;         // Current char index, relative to start of current line
+    int32_t lineno;         // Current Line number
+    int32_t last_line_len;  // Length of the last line, for backing up
 } FileReader;
 
 /**
@@ -34,28 +35,21 @@ FileReader *FileReader_init(char *fname, size_t fsize);
 void FileReader_free(FileReader *fr);
 
 /**
- * Get the char k places after the current char.
+ * Move one char up the buffer and return it.
  *
- * @param fr
- * @param k
- * @return The k-th char
+ * @param fr - FileReader
+ * @return char from the buffer or EOF
  */
-char FileReader_peek(FileReader *fr, int32_t k);
+char FileReader_next(FileReader *fr);
 
 /**
- * Get the char k places after current char and move the index to that place.
- *
- * @param fr
- * @param k
- * @return The k-th
+ * Move one char down the buffer and return it.
+ * Backing up more over more then one newline will break
+ * the charno.
+ * @param fr - FileReader
+ * @return char from the buffer
  */
-char FileReader_consume(FileReader *fr, int32_t k);
 
-/**
- * Checks if fr is at EOF
- * @param fr
- * @return 1 if EOF, else 0
- */
-int32_t FileReader_isEOF(FileReader *fr);
+char FileReader_back(FileReader *fr);
 
 #endif //WINDSOLAR_FILE_READER_H
