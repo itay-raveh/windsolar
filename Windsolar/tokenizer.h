@@ -16,7 +16,7 @@ typedef struct
     Token token;            // Current token type
     char *str;              // Start of current token
     size_t len;             // Length of the current token
-    Tokenizer_error err;    // Error type for when one is found
+    Error err;              // Error type for when one is found
 } Tokenizer;
 
 /**
