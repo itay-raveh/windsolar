@@ -76,16 +76,14 @@ char FileReader_back(FileReader *fr)
     assert(fr->curr > 0);
 
     if (fr->curr == 0) return fr->buff[fr->curr];
+    if (fr->buff[fr->curr] == '\n')
+    {
+        fr->lineno--;
+        fr->charno = fr->last_line_len + 1;
+    }
+    fr->charno--;
 
     fr->curr--;
     char c = fr->buff[fr->curr];
-
-    if (c == '\n')
-    {
-        fr->lineno--;
-        fr->charno = fr->last_line_len;
-    }
-
-    fr->charno--;
     return c;
 }
