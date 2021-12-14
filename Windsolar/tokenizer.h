@@ -7,16 +7,7 @@
 
 #include "file_reader.h"
 #include "token.h"
-
-typedef enum
-{
-    OK = 0, UNEXPECTED_CHAR = 1, UNCLOSED_STRING = 2, UNCLOSED_COMMENT = 3
-} Tokenizer_error;
-
-/**
- * String description of error
- */
-char *Tokenizer_error_desc(Tokenizer_error te);
+#include "error.h"
 
 typedef struct
 {

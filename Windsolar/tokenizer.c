@@ -8,24 +8,7 @@
 #include <ctype.h>      // isspace(), isalpha(), isdigit()
 #include "tokenizer.h"
 #include "utils.h"      // NEW()
-#include "macros.h"     // TRACE(), EXIT_WITH_MSG()
-
-char *Tokenizer_error_desc(Tokenizer_error te)
-{
-    switch (te)
-    {
-        case OK:
-            return "Everything is OK... why is there an error?";
-        case UNEXPECTED_CHAR:
-            return "Unexpected char for this location";
-        case UNCLOSED_STRING:
-            return "A string has been opened but was never closed";
-        case UNCLOSED_COMMENT:
-            return "A comment has been opened but was never closed";
-        default:
-            return "Unknown error";
-    }
-}
+#include "macros.h"     // TRACE()
 
 Tokenizer *Tokenizer_init(FileReader *fr)
 {
