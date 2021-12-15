@@ -12,9 +12,3 @@ void *malloc_s(size_t size)
     if (p == NULL) EXIT_WITH_MSG(EXIT_FAILURE, "%s", "Error: memory allocation error");
     return p;
 }
-
-void strcatc(char *restrict dst, const char c)
-{
-    char s[2] = {c, '\0'};
-    strcat(dst, s);
-}

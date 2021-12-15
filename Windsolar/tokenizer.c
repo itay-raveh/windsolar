@@ -3,14 +3,13 @@
 //
 
 #include <assert.h>     // assert()
-#include <string.h>     // strlen()
 #include <stdlib.h>     // free()
 #include <ctype.h>      // isspace(), isalpha(), isdigit()
 #include "tokenizer.h"
 #include "utils.h"      // NEW()
 #include "macros.h"     // TRACE()
 
-Tokenizer *Tokenizer_init(FileReader *fr)
+Tokenizer *Tokenizer_init(FileReader *const restrict fr)
 {
     assert(fr);
     TRACE("%s", "init Tokenizer\n");
@@ -25,7 +24,7 @@ Tokenizer *Tokenizer_init(FileReader *fr)
     return t;
 }
 
-void Tokenizer_free(Tokenizer *t)
+inline void Tokenizer_free(Tokenizer *const restrict t)
 {
     assert(t);
     TRACE("%s", "free Tokenizer\n");
@@ -34,12 +33,12 @@ void Tokenizer_free(Tokenizer *t)
     free(t);
 }
 
-bool islabel(char c)
+bool islabel(const char c)
 {
     return (c == '_' || c == '-' || isalpha(c));
 }
 
-bool Tokenizer_next(Tokenizer *t)
+bool Tokenizer_next(Tokenizer *const restrict t)
 {
     #define NEXTC (FileReader_next(t->fr))
     #define CURRC (FileReader_curr(t->fr))

@@ -24,21 +24,21 @@ typedef struct
  * @param fsize - size of the file in bytes
  * @return ptr to the new FileReader
  */
-FileReader *FileReader_init(char *fname, size_t fsize);
+FileReader *FileReader_init(const char *restrict fname, size_t fsize);
 
 /**
  * Free a dynamically allocated FileReader.
  *
  * @param fr - FileReader to free
  */
-void FileReader_free(FileReader *fr);
+void FileReader_free(FileReader *restrict fr);
 
 /**
  * Get ptr to current char
  * @param fr - FileReader
  * @return ptr to char from the buffer or NULL
  */
-char *FileReader_curr(FileReader *fr);
+char *FileReader_curr(const FileReader *restrict fr);
 
 /**
  * Move one char up the buffer and return it.
@@ -46,6 +46,6 @@ char *FileReader_curr(FileReader *fr);
  * @param fr - FileReader
  * @return ptr to char from the buffer or NULL
  */
-char *FileReader_next(FileReader *fr);
+char *FileReader_next(FileReader *restrict fr);
 
 #endif //WINDSOLAR_FILE_READER_H

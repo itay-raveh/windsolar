@@ -26,14 +26,14 @@ typedef struct
  * @param fr - FileReader to read from
  * @return ptr to Tokenizer
  */
-Tokenizer *Tokenizer_init(FileReader *fr);
+Tokenizer *Tokenizer_init(FileReader *restrict fr);
 
 /**
  * Free a dynamically allocated Tokenizer
  *
  * @param t - Tokenizer
  */
-void Tokenizer_free(Tokenizer *t);
+void Tokenizer_free(Tokenizer *restrict t);
 
 /**
  * Get the next token from the input.
@@ -41,6 +41,6 @@ void Tokenizer_free(Tokenizer *t);
  * @param t - Tokenizer
  * @return true on success, false on error
  */
-bool Tokenizer_next(Tokenizer *t);
+bool Tokenizer_next(Tokenizer *restrict t);
 
 #endif //WINDSOLAR_TOKENIZER_H

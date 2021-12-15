@@ -15,13 +15,6 @@
  */
 void *malloc_s(size_t size);
 
-#define NEW(T) (T*)malloc_s(sizeof(T))
-
-/**
- * strcat but with a char as the source
- * @param dst
- * @param c
- */
-void strcatc(char *restrict dst, char c);
+#define NEW(T) ((T*)malloc_s(sizeof(T)))
 
 #endif //WINDSOLAR_UTILS_H

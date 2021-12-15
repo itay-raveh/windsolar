@@ -8,7 +8,7 @@
 #include "utils.h"          // NEW()
 #include "macros.h"         // EXIT_WITH_MSG()
 
-FileReader *FileReader_init(char *fname, size_t fsize)
+FileReader *FileReader_init(const char *const restrict fname, const size_t fsize)
 {
     assert(fname);
     assert(strlen(fname) >= 1);
@@ -38,7 +38,7 @@ FileReader *FileReader_init(char *fname, size_t fsize)
     return fr;
 }
 
-void FileReader_free(FileReader *fr)
+inline void FileReader_free(FileReader *const restrict fr)
 {
     assert(fr);
     TRACE("%s", "free FileReader\n");
@@ -47,14 +47,14 @@ void FileReader_free(FileReader *fr)
     free(fr);
 }
 
-char *FileReader_curr(FileReader *fr)
+inline char *FileReader_curr(const FileReader *const restrict fr)
 {
     assert(fr);
 
     return fr->curr > fr->fsize ? NULL : &(fr->buff[fr->curr]);
 }
 
-char *FileReader_next(FileReader *fr)
+char *FileReader_next(FileReader *const restrict fr)
 {
     assert(fr);
     assert(fr->curr < 0 || fr->curr <= fr->fsize);
