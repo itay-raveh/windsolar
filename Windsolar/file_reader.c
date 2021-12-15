@@ -18,10 +18,9 @@ FileReader *FileReader_init(char *fname, size_t fsize)
     FileReader *fr = NEW(FileReader);
     fr->buff = malloc_s(fsize + 1); // +1 for \0
     fr->fsize = fsize;
-    fr->curr = -1;
+    fr->curr = 0;
     fr->lineno = 1;
     fr->charno = 1;
-    fr->last_line_len = 0;
 
     FILE *f = fopen(fname, "r");
     if (f == NULL)
@@ -48,42 +47,29 @@ void FileReader_free(FileReader *fr)
     free(fr);
 }
 
-char FileReader_next(FileReader *fr)
+char *FileReader_curr(FileReader *fr)
+{
+    assert(fr);
+
+    return fr->curr > fr->fsize ? NULL : &(fr->buff[fr->curr]);
+}
+
+char *FileReader_next(FileReader *fr)
 {
     assert(fr);
     assert(fr->curr < 0 || fr->curr <= fr->fsize);
 
-    if (fr->curr == fr->fsize) return EOF;
+    if (fr->curr >= fr->fsize) return NULL;
 
     fr->curr++;
-    char c = fr->buff[fr->curr];
-    if (c == '\0') return EOF;
+    char *c = &(fr->buff[fr->curr]);
 
-    if (c == '\n')
+    if (*c == '\n')
     {
         fr->lineno++;
-        fr->last_line_len = fr->charno;
         fr->charno = 0;
     }
-
     fr->charno++;
-    return c;
-}
 
-char FileReader_back(FileReader *fr)
-{
-    assert(fr);
-    assert(fr->curr > 0);
-
-    if (fr->curr == 0) return fr->buff[fr->curr];
-    if (fr->buff[fr->curr] == '\n')
-    {
-        fr->lineno--;
-        fr->charno = fr->last_line_len + 1;
-    }
-    fr->charno--;
-
-    fr->curr--;
-    char c = fr->buff[fr->curr];
     return c;
 }
