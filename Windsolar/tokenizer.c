@@ -41,34 +41,36 @@ bool islabel(char c)
 
 bool Tokenizer_next(Tokenizer *t)
 {
+    #define NEXTC (FileReader_next(t->fr))
+    #define CURRC (FileReader_curr(t->fr))
     assert(t);
 
     char c;
 
     skip_spaces:
-    do
-    {
-        c = FileReader_next(t->fr);
-    } while (isspace(c));
+    do c = *(t->fr->curr == 0 ? CURRC : NEXTC);
+    while (isspace(c));
+
+    // most common values
+    t->str = CURRC;
+    t->len = 1;
 
     // skip comments
     if (c == '#')
     {
-        do
-        {
-            c = FileReader_next(t->fr);
-        } while (c != '#' && c != EOF);
+        do c = *NEXTC;
+        while (c != '#' && c != '\0');
 
-        if (c == EOF)
+        if (c == '\0')
+        {
             t->err = UNCLOSED_COMMENT;
             return false;
         } else goto skip_spaces;
     }
 
-    // check for EOF
-    if (c == EOF)
+    // ENDMARKER
+    if (c == '\0')
     {
-        t->token = ENDMARKER;
         t->str = NULL;
         t->len = 0;
         t->token = ENDMARKER;
@@ -88,13 +90,12 @@ bool Tokenizer_next(Tokenizer *t)
         // LABEL
         if (islabel(c))
         {
-            t->str = &(t->fr->buff[t->fr->curr]);
-
-            int32_t len = 1;
-            while (islabel(FileReader_next(t->fr))) len++;
-            FileReader_back(t->fr);
-
-            t->len = len;
+            t->len = 0;
+            while (islabel(*CURRC))
+            {
+                NEXTC;
+                t->len++;
+            }
             t->token = LABEL;
             return true;
         }
@@ -114,8 +115,6 @@ bool Tokenizer_next(Tokenizer *t)
     // SEMICOL
     if (c == ';')
     {
-        t->str = &(t->fr->buff[t->fr->curr]);
-        t->len = 1;
         t->token = SEMICOL;
         return true;
     }
@@ -123,13 +122,13 @@ bool Tokenizer_next(Tokenizer *t)
     // NUMBER
     if (isdigit(c))
     {
-        t->str = &(t->fr->buff[t->fr->curr]);
+        t->len = 0;
+        while (isdigit(*CURRC))
+        {
+            NEXTC;
+            t->len++;
+        }
 
-        int32_t len = 1;
-        while (isdigit(FileReader_next(t->fr))) len++;
-        FileReader_back(t->fr);
-
-        t->len = len;
         t->token = NUMBER;
         return true;
     }
@@ -137,13 +136,18 @@ bool Tokenizer_next(Tokenizer *t)
     // STRING
     if (c == '"')
     {
-        t->str = &(t->fr->buff[t->fr->curr]);
+        do
+        {
+            c = *NEXTC;
+            t->len++;
+        } while (c != '"' && c != '\0');
 
-        int32_t len = 0;
-        while ('"' != FileReader_next(t->fr)) len++;
-        FileReader_back(t->fr);
+        if (c == '\0')
+        {
+            t->err = UNCLOSED_STRING;
+            return false;
+        }
 
-        t->len = len;
         t->token = STRING;
         return true;
     }
@@ -151,13 +155,13 @@ bool Tokenizer_next(Tokenizer *t)
     // CMD
     if (isalpha(c))
     {
-        t->str = &(t->fr->buff[t->fr->curr]);
+        t->len = 0;
+        while (isalnum(*CURRC))
+        {
+            NEXTC;
+            t->len++;
+        }
 
-        int32_t len = 1;
-        while (isalnum(FileReader_next(t->fr))) len++;
-        FileReader_back(t->fr);
-
-        t->len = len;
         t->token = CMD;
         return true;
     }
