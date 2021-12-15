@@ -34,12 +34,12 @@ void Tokenizer_free(Tokenizer *t)
     free(t);
 }
 
-int32_t islabel(char c)
+bool islabel(char c)
 {
     return (c == '_' || c == '-' || isalpha(c));
 }
 
-int32_t Tokenizer_next(Tokenizer *t)
+bool Tokenizer_next(Tokenizer *t)
 {
     assert(t);
 
@@ -61,8 +61,8 @@ int32_t Tokenizer_next(Tokenizer *t)
 
         if (c == EOF)
             t->err = UNCLOSED_COMMENT;
-        else
-            goto skip_spaces;
+            return false;
+        } else goto skip_spaces;
     }
 
     // check for EOF
@@ -71,7 +71,8 @@ int32_t Tokenizer_next(Tokenizer *t)
         t->token = ENDMARKER;
         t->str = NULL;
         t->len = 0;
-        return 1;
+        t->token = ENDMARKER;
+        return true;
     }
 
     if (!t->in_block)
@@ -79,11 +80,9 @@ int32_t Tokenizer_next(Tokenizer *t)
         // LPAR
         if (c == '(')
         {
-            t->in_block = 1;
+            t->in_block = true;
             t->token = LPAR;
-            t->str = &(t->fr->buff[t->fr->curr]);
-            t->len = 1;
-            return 1;
+            return true;
         }
 
         // LABEL
@@ -97,21 +96,19 @@ int32_t Tokenizer_next(Tokenizer *t)
 
             t->len = len;
             t->token = LABEL;
-            return 1;
+            return true;
         }
 
         t->err = UNEXPECTED_CHAR;
-        return 0;
+        return false;
     }
 
     // RPAR
     if (c == ')')
     {
-        t->in_block = 0;
+        t->in_block = false;
         t->token = RPAR;
-        t->str = &(t->fr->buff[t->fr->curr ]);
-        t->len = 1;
-        return 1;
+        return true;
     }
 
     // SEMICOL
@@ -120,7 +117,7 @@ int32_t Tokenizer_next(Tokenizer *t)
         t->str = &(t->fr->buff[t->fr->curr]);
         t->len = 1;
         t->token = SEMICOL;
-        return 1;
+        return true;
     }
 
     // NUMBER
@@ -134,7 +131,7 @@ int32_t Tokenizer_next(Tokenizer *t)
 
         t->len = len;
         t->token = NUMBER;
-        return 1;
+        return true;
     }
 
     // STRING
@@ -148,7 +145,7 @@ int32_t Tokenizer_next(Tokenizer *t)
 
         t->len = len;
         t->token = STRING;
-        return 1;
+        return true;
     }
 
     // CMD
@@ -162,9 +159,9 @@ int32_t Tokenizer_next(Tokenizer *t)
 
         t->len = len;
         t->token = CMD;
-        return 1;
+        return true;
     }
 
     t->err = UNEXPECTED_CHAR;
-    return 0;
+    return false;
 }

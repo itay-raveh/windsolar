@@ -5,6 +5,7 @@
 #ifndef WINDSOLAR_TOKENIZER_H
 #define WINDSOLAR_TOKENIZER_H
 
+#include <stdbool.h>
 #include "file_reader.h"
 #include "token.h"
 #include "error.h"
@@ -12,7 +13,7 @@
 typedef struct
 {
     FileReader *fr;         // FileReader of file to tokenize
-    int32_t in_block;       // Is the tokenizer currently inside a command block
+    bool in_block;          // Is the tokenizer currently inside a command block
     Token token;            // Current token type
     char *str;              // Start of current token
     size_t len;             // Length of the current token
@@ -38,8 +39,8 @@ void Tokenizer_free(Tokenizer *t);
  * Get the next token from the input.
  *
  * @param t - Tokenizer
- * @return 1 on success, 0 on error
+ * @return true on success, false on error
  */
-int32_t Tokenizer_next(Tokenizer *t);
+bool Tokenizer_next(Tokenizer *t);
 
 #endif //WINDSOLAR_TOKENIZER_H
