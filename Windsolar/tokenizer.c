@@ -21,6 +21,8 @@ Tokenizer *Tokenizer_init(FileReader *const restrict fr)
     t->str = NULL;
     t->len = 0;
     t->err = OK;
+    t->lineno = 0;
+    t->charno = 0;
     return t;
 }
 
@@ -49,6 +51,9 @@ bool Tokenizer_next(Tokenizer *const restrict t)
     skip_spaces:
     do c = *(t->fr->curr == 0 ? CURRC : NEXTC);
     while (isspace(c));
+
+    t->lineno = t->fr->lineno;
+    t->charno = t->fr->charno;
 
     // most common values
     t->str = CURRC;
@@ -95,6 +100,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
                 NEXTC;
                 t->len++;
             }
+            t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
+            t->charno = t->fr->charno - 1;
             t->token = LABEL;
             return true;
         }
@@ -127,7 +134,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             NEXTC;
             t->len++;
         }
-
+        t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
+        t->charno = t->fr->charno - 1;
         t->token = NUMBER;
         return true;
     }
@@ -140,13 +148,15 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             c = *NEXTC;
             t->len++;
         } while (c != '"' && c != '\0');
+        NEXTC;
 
         if (c == '\0')
         {
             t->err = UNCLOSED_STRING;
             return false;
         }
-
+        t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
+        t->charno = t->fr->charno - 1;
         t->token = STRING;
         return true;
     }
@@ -160,7 +170,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             NEXTC;
             t->len++;
         }
-
+        t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
+        t->charno = t->fr->charno - 1;
         t->token = CMD;
         return true;
     }

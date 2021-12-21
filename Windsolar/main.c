@@ -78,8 +78,8 @@ int main(int argc, char *argv[])
             strncpy(str, t->str, t->len);
         str[t->len] = '\0';
 
-        printf("%2d,%3lu-%3d:\t\t%-10s\t%s\n", t->fr->lineno, t->fr->charno - t->len, t->fr->charno - 1,
-               token_names[t->token], str);
+        printf("%2zu,%3lu-%3lu:\t\t%-10s\t%s\n", t->lineno, t->charno - t->len, t->charno - 1, token_names[t->token],
+               str);
 
         free(str);
 
@@ -87,8 +87,7 @@ int main(int argc, char *argv[])
     }
 
     if (t->err)
-        printf("Syntax Error: %d, %lu ('%c'): %s\n", t->fr->lineno, t->fr->charno - t->len,
-               t->fr->buff[t->fr->curr - t->len + 1], Tokenizer_error_desc(t->err));
+        printf("Syntax Error: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[t->err]);
 
     Tokenizer_free(t);
 }

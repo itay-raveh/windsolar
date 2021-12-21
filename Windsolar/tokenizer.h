@@ -18,6 +18,8 @@ typedef struct
     char *str;              // Start of current token
     size_t len;             // Length of the current token
     Error err;              // Error type for when one is found
+    size_t lineno;          // Current line number
+    size_t charno;          // Current char number relative to start of line
 } Tokenizer;
 
 /**
