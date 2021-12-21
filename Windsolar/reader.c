@@ -4,20 +4,20 @@
 
 #include <string.h>         // strlen()
 #include <assert.h>         // assert()
-#include "file_reader.h"
+#include "reader.h"
 #include "utils.h"          // NEW()
 #include "macros.h"         // EXIT_WITH_MSG()
 
-FileReader *FileReader_init(const char *const restrict fname, const size_t fsize)
+Reader *Reader_fromFile(const char *restrict fname, size_t size)
 {
     assert(fname);
     assert(strlen(fname) >= 1);
-    assert(fsize >= 0);
-    TRACE("init FileReader with fname='%s' fsize=%lu\n", fname, fsize);
+    assert(size >= 0);
+    TRACE("init Reader with fname='%s' size=%lu\n", fname, size);
 
-    FileReader *fr = NEW(FileReader);
-    fr->buff = malloc_s(fsize + 1); // +1 for \0
-    fr->fsize = fsize;
+    Reader *fr = NEW(Reader);
+    fr->buff = malloc_s(size + 1); // +1 for \0
+    fr->size = size;
     fr->curr = 0;
     fr->lineno = 1;
     fr->charno = 1;
@@ -26,40 +26,40 @@ FileReader *FileReader_init(const char *const restrict fname, const size_t fsize
     if (f == NULL)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not open %s\n", fname);
 
-    size_t read_bytes = fread(fr->buff, sizeof(char), fsize, f);
+    size_t read_bytes = fread(fr->buff, sizeof(char), size, f);
 
     int err = ferror(f);
     fclose(f);
 
-    if (err != 0 || read_bytes != fsize)
+    if (err != 0 || read_bytes != size)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not read from %s\n", fname);
 
-    fr->buff[fsize] = '\0';
+    fr->buff[size] = '\0';
     return fr;
 }
 
-inline void FileReader_free(FileReader *const restrict fr)
+inline void Reader_free(Reader *const restrict fr)
 {
     assert(fr);
-    TRACE("%s", "free FileReader\n");
+    TRACE("%s", "free Reader\n");
 
     free(fr->buff);
     free(fr);
 }
 
-inline char *FileReader_curr(const FileReader *const restrict fr)
+inline char *Reader_curr(const Reader *const restrict fr)
 {
     assert(fr);
 
-    return fr->curr > fr->fsize ? NULL : &(fr->buff[fr->curr]);
+    return fr->curr > fr->size ? NULL : &(fr->buff[fr->curr]);
 }
 
-char *FileReader_next(FileReader *const restrict fr)
+char *Reader_next(Reader *const restrict fr)
 {
     assert(fr);
-    assert(fr->curr < 0 || fr->curr <= fr->fsize);
+    assert(fr->curr < 0 || fr->curr <= fr->size);
 
-    if (fr->curr >= fr->fsize) return NULL;
+    if (fr->curr >= fr->size) return NULL;
 
     fr->curr++;
     char *c = &(fr->buff[fr->curr]);

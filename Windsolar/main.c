@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     char *fname = parse_args(argc, argv);
     size_t fsize = verify_file(fname);
 
-    Tokenizer *t = Tokenizer_init(FileReader_init(fname, fsize));
+    Tokenizer *t = Tokenizer_init(Reader_fromFile(fname, fsize));
 
     while (Tokenizer_next(t))
     {

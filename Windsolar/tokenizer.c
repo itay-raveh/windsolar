@@ -9,13 +9,13 @@
 #include "utils.h"      // NEW()
 #include "macros.h"     // TRACE()
 
-Tokenizer *Tokenizer_init(FileReader *const restrict fr)
+Tokenizer *Tokenizer_init(Reader *const restrict r)
 {
-    assert(fr);
+    assert(r);
     TRACE("%s", "init Tokenizer\n");
 
     Tokenizer *t = NEW(Tokenizer);
-    t->fr = fr;
+    t->reader = r;
     t->in_block = 0;
     t->token = -1;
     t->str = NULL;
@@ -31,7 +31,7 @@ inline void Tokenizer_free(Tokenizer *const restrict t)
     assert(t);
     TRACE("%s", "free Tokenizer\n");
 
-    FileReader_free(t->fr);
+    Reader_free(t->reader);
     free(t);
 }
 
@@ -42,18 +42,18 @@ bool islabel(const char c)
 
 bool Tokenizer_next(Tokenizer *const restrict t)
 {
-    #define NEXTC (FileReader_next(t->fr))
-    #define CURRC (FileReader_curr(t->fr))
+    #define NEXTC (Reader_next(t->reader))
+    #define CURRC (Reader_curr(t->reader))
     assert(t);
 
     char c;
 
     skip_spaces:
-    do c = *(t->fr->curr == 0 ? CURRC : NEXTC);
+    do c = *(t->reader->curr == 0 ? CURRC : NEXTC);
     while (isspace(c));
 
-    t->lineno = t->fr->lineno;
-    t->charno = t->fr->charno;
+    t->lineno = t->reader->lineno;
+    t->charno = t->reader->charno;
 
     // most common values
     t->str = CURRC;
@@ -100,8 +100,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
                 NEXTC;
                 t->len++;
             }
-            t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
-            t->charno = t->fr->charno - 1;
+            t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
+            t->charno = t->reader->charno - 1;
             t->token = LABEL;
             return true;
         }
@@ -134,8 +134,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             NEXTC;
             t->len++;
         }
-        t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
-        t->charno = t->fr->charno - 1;
+        t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
+        t->charno = t->reader->charno - 1;
         t->token = NUMBER;
         return true;
     }
@@ -155,8 +155,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             t->err = UNCLOSED_STRING;
             return false;
         }
-        t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
-        t->charno = t->fr->charno - 1;
+        t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
+        t->charno = t->reader->charno - 1;
         t->token = STRING;
         return true;
     }
@@ -170,8 +170,8 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             NEXTC;
             t->len++;
         }
-        t->lineno = t->fr->lineno - (*CURRC == '\n' ? 1 : 0);
-        t->charno = t->fr->charno - 1;
+        t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
+        t->charno = t->reader->charno - 1;
         t->token = CMD;
         return true;
     }

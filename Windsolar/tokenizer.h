@@ -6,13 +6,13 @@
 #define WINDSOLAR_TOKENIZER_H
 
 #include <stdbool.h>
-#include "file_reader.h"
+#include "reader.h"
 #include "token.h"
 #include "error.h"
 
 typedef struct
 {
-    FileReader *fr;         // FileReader of file to tokenize
+    Reader *reader;         // Reader of file to tokenize
     bool in_block;          // Is the tokenizer currently inside a command block
     Token token;            // Current token type
     char *str;              // Start of current token
@@ -25,10 +25,10 @@ typedef struct
 /**
  * Dynamically allocate a Tokenizer and initialize the fields
  *
- * @param fr - FileReader to read from
+ * @param r - Reader to read from
  * @return ptr to Tokenizer
  */
-Tokenizer *Tokenizer_init(FileReader *restrict fr);
+Tokenizer *Tokenizer_init(Reader *restrict r);
 
 /**
  * Free a dynamically allocated Tokenizer
