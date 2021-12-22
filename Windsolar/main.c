@@ -4,6 +4,7 @@
 #include "macros.h"         // EXIT_WITH_MSG()
 #include "utils.h"
 #include "tokenizer.h"
+#include "parse_tree.h"
 
 /**
  * Parse command line args.
@@ -71,23 +72,7 @@ int main(int argc, char *argv[])
 
     Tokenizer *t = Tokenizer_init(Reader_fromFile(fname, fsize));
 
-    while (Tokenizer_next(t))
-    {
-        char *str = (char *) malloc_s(t->len + 1);
-        if (t->len > 0)
-            strncpy(str, t->str, t->len);
-        str[t->len] = '\0';
-
-        printf("%2zu,%3lu-%3lu:\t\t%-10s\t%s\n", t->lineno, t->charno - t->len, t->charno - 1, token_names[t->token],
-               str);
-
-        free(str);
-
-        if (t->token == ENDMARKER) break;
-    }
-
-    if (t->err)
-        printf("Syntax Error: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[t->err]);
+    ParseTreeFromTokenizer(t);
 
     Tokenizer_free(t);
 }
