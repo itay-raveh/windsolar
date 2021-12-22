@@ -20,7 +20,7 @@ Tokenizer *Tokenizer_init(Reader *const restrict r)
     t->token = -1;
     t->str = NULL;
     t->len = 0;
-    t->err = OK;
+    t->err = E_OK;
     t->lineno = 0;
     t->charno = 0;
     return t;
@@ -67,7 +67,7 @@ bool Tokenizer_next(Tokenizer *const restrict t)
 
         if (c == '\0')
         {
-            t->err = UNCLOSED_COMMENT;
+            t->err = E_UNCLOSED_COMMENT;
             return false;
         } else goto skip_spaces;
     }
@@ -106,7 +106,7 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             return true;
         }
 
-        t->err = UNEXPECTED_CHAR;
+        t->err = E_UNEXPECTED_CHAR;
         return false;
     }
 
@@ -152,7 +152,7 @@ bool Tokenizer_next(Tokenizer *const restrict t)
 
         if (c == '\0')
         {
-            t->err = UNCLOSED_STRING;
+            t->err = E_UNCLOSED_STRING;
             return false;
         }
         t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
@@ -176,6 +176,6 @@ bool Tokenizer_next(Tokenizer *const restrict t)
         return true;
     }
 
-    t->err = UNEXPECTED_CHAR;
+    t->err = E_UNEXPECTED_CHAR;
     return false;
 }

@@ -7,10 +7,10 @@
 
 typedef enum
 {
-    OK,
-    UNEXPECTED_CHAR,
-    UNCLOSED_STRING,
-    UNCLOSED_COMMENT
+    E_OK,
+    E_UNEXPECTED_CHAR,
+    E_UNCLOSED_STRING,
+    E_UNCLOSED_COMMENT
 } Error;
 
 extern const char *const error_msg[4];
