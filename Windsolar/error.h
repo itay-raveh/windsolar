@@ -10,9 +10,13 @@ typedef enum
     E_OK,
     E_UNEXPECTED_CHAR,
     E_UNCLOSED_STRING,
-    E_UNCLOSED_COMMENT
+    E_UNCLOSED_COMMENT,
+    E_MISSING_LABEL,
+    E_MISSING_LPAR,
+    E_MISSING_SEMICOL,
+    E_UNCLOSED_BLOCK
 } Error;
 
-extern const char *const error_msg[4];
+extern const char *const error_msg[];
 
 #endif //WINDSOLAR_ERROR_H
