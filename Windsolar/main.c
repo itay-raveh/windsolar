@@ -72,7 +72,9 @@ int main(int argc, char *argv[])
 
     Tokenizer *t = Tokenizer_init(Reader_fromFile(fname, fsize));
 
-    ParseTreeFromTokenizer(t);
-
+    LabelNode *pt = ParseTree_fromTokenizer(t);
     Tokenizer_free(t);
+
+    ParseTree_print(pt);
+    ParseTree_free(pt);
 }
