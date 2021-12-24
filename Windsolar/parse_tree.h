@@ -45,6 +45,10 @@ LabelNode *LabelNode_init(char *label);
 
 void LabelNode_free(LabelNode *ln);
 
-LabelNode *ParseTreeFromTokenizer(Tokenizer *restrict t);
+LabelNode *ParseTree_fromTokenizer(Tokenizer *restrict t);
+
+void ParseTree_free(LabelNode *restrict head);
+
+void ParseTree_print(LabelNode *restrict head);
 
 #endif //WINDSOLAR_PARSE_TREE_H

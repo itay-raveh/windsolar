@@ -5,6 +5,7 @@
 #include <stdlib.h>     // free()
 #include "parse_tree.h"
 #include "utils.h"      // NEW()
+#include "macros.h"     // TRACE()
 #include <string.h>
 #include <stdio.h>
 
@@ -20,9 +21,12 @@ InstNode *InstNode_init(Token type, char *str)
 
 void InstNode_free(InstNode *const restrict in)
 {
-    if (in) InstNode_free(in->next);
-    free(in->str);
-    free(in);
+    if (in)
+    {
+        InstNode_free(in->next);
+        free(in->str);
+        free(in);
+    }
 }
 
 LabelNode *LabelNode_init(char *label)
@@ -34,36 +38,148 @@ LabelNode *LabelNode_init(char *label)
     return ln;
 }
 
-void LabelNode_free(LabelNode *ln)
+void LabelNode_free(LabelNode *const restrict ln)
 {
-    if (ln) LabelNode_free(ln->next);
-    if (ln->block_head) InstNode_free(ln->block_head);
-    free(ln->label);
-    free(ln);
+    if (ln)
+    {
+        LabelNode_free(ln->next);
+        if (ln->block_head) InstNode_free(ln->block_head);
+        free(ln->label);
+        free(ln);
+    }
 }
 
-LabelNode *ParseTreeFromTokenizer(Tokenizer *restrict t)
+inline void ParseTree_free(LabelNode *const restrict head)
 {
-    while (Tokenizer_next(t))
+    TRACE("%s\n", "free ParseTree");
+    LabelNode_free(head);
+}
+
+char *newstr(char *const restrict src, const size_t len)
+{
+    char *str = (char *) malloc_s(len + 1);
+    if (len > 0) strncpy(str, src, len);
+    str[len] = '\0';
+    return str;
+}
+
+inline void printSyntaxError(Tokenizer *const restrict t, Error e)
+{
+    printf("SyntaxError: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[e]);
+}
+
+LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
+{
+    LabelNode *tree_head = NULL, *last_l, *new_l;
+
+    while (true)
     {
-        char *str = (char *) malloc_s(t->len + 1);
-        if (t->len > 0)
-            strncpy(str, t->str, t->len);
-        str[t->len] = '\0';
+        // Grammar is always the same:
+        //
+        // LABEL, LPAR, (CMD | STRING | NUMBER, SEMICOL)*, (CMD | STRING | NUMBER)?, RPAR
+        //
+        // Any deviation should raise an error.
 
-        printf("%2zu,%3lu-%3lu:\t\t%-10s\t%s\n", t->lineno, t->charno - t->len, t->charno - 1, token_names[t->token],
-               str);
+        // LABEL
+        if (!Tokenizer_next(t))
+        {
+            printSyntaxError(t, t->err);
+            return NULL;
+        }
 
-        free(str);
+        if (t->token != LABEL)
+        {
+            // instead of another (or any) label+block, we can just reach the end.
+            // if any block has been parsed before then that is legal syntax,
+            // and if not tree_head would still be NUL, like any error.
+            if (t->token == ENDMARKER) return tree_head;
 
-        if (t->token == ENDMARKER) break;
+            printSyntaxError(t, E_MISSING_LABEL);
+            return NULL;
+        }
+
+        new_l = LabelNode_init(newstr(t->str, t->len));
+
+        // LPAR
+        if (!Tokenizer_next(t))
+        {
+            printSyntaxError(t, t->err);
+            return NULL;
+        }
+
+        if (t->token != LPAR)
+        {
+            printSyntaxError(t, E_MISSING_LPAR);
+            return NULL;
+        }
+
+        // Instructions and RPAR
+        InstNode *block_head = NULL, *last_i, *new_i;
+        Token last_t = LPAR;
+
+        while (true)
+        {
+            if (!Tokenizer_next(t))
+            {
+                printSyntaxError(t, t->err);
+                return NULL;
+            }
+
+            switch (t->token)
+            {
+                case LPAR:
+                case LABEL:
+                    // should already be stopped at tokenizer, but still
+                    printSyntaxError(t, t->err);
+                    return NULL;
+                case RPAR:
+                    goto end_loop;
+                case SEMICOL:
+                    last_t = SEMICOL;
+                    break;
+                case STRING:
+                case NUMBER:
+                case CMD:
+                    if (last_t != LPAR && last_t != SEMICOL)
+                    {
+                        printSyntaxError(t, E_MISSING_SEMICOL);
+                        return NULL;
+                    }
+
+                    new_i = InstNode_init(t->token, newstr(t->str, t->len));
+                    if (block_head == NULL) block_head = last_i = new_i;
+                    else
+                    {
+                        last_i->next = new_i;
+                        last_i = new_i;
+                    }
+
+                    last_t = t->token;
+                    break;
+                case ENDMARKER:
+                    printSyntaxError(t, E_UNCLOSED_BLOCK);
+                    return NULL;
+            }
+        }
+        end_loop:
+
+        new_l->block_head = block_head;
+        if (tree_head == NULL) tree_head = last_l = new_l;
+        else
+        {
+            last_l->next = new_l;
+            last_l = new_l;
+        }
     }
+}
 
-    if (t->err)
+void ParseTree_print(LabelNode *restrict head)
+{
+    for (; head != NULL; head = head->next)
     {
-        printf("Syntax Error: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[t->err]);
-        return NULL;
+        printf("{LabelNode | %s}", head->label);
+        for (InstNode *block_head = head->block_head; block_head != NULL; block_head = block_head->next)
+            printf(" -> {InstNode | %s | %s}", token_names[block_head->type], block_head->str);
+        if (head->next) puts("\n           |\n           V"); else puts("");
     }
-
-    return NULL;
 }
