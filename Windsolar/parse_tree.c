@@ -49,23 +49,35 @@ void LabelNode_free(LabelNode *const restrict ln)
     }
 }
 
-inline void ParseTree_free(LabelNode *const restrict head)
+void ParseTree_free(LabelNode *const restrict head)
 {
     TRACE("%s\n", "free ParseTree");
     LabelNode_free(head);
 }
 
-char *newstr(char *const restrict src, const size_t len)
-{
-    char *str = (char *) malloc_s(len + 1);
-    if (len > 0) strncpy(str, src, len);
-    str[len] = '\0';
-    return str;
-}
-
-inline void printSyntaxError(Tokenizer *const restrict t, Error e)
+void printSyntaxError(Tokenizer *const restrict t, Error e)
 {
     printf("SyntaxError: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[e]);
+}
+
+void printToken(Tokenizer *const restrict t)
+{
+    char *str = newstr(t->str, t->len);
+    printf("line %2zu, chars %3lu to %3zu:\t\t%-7s\t\t%s\n", t->lineno, t->charno - t->len, t->charno - 1,
+           token_names[t->token], str);
+    free(str);
+}
+
+bool nextToken(Tokenizer *const restrict t, bool verbose)
+{
+    if (!Tokenizer_next(t))
+    {
+        printSyntaxError(t, t->err);
+        return false;
+    }
+
+    if (verbose) printToken(t);
+    return true;
 }
 
 LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
@@ -80,20 +92,13 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
         //
         // Any deviation should raise an error.
 
-        // LABEL
-        if (!Tokenizer_next(t))
-        {
-            printSyntaxError(t, t->err);
-            return NULL;
-        }
+        // LABEL or ENDMARKER
+        if (!nextToken(t, true)) return NULL;
+
+        if (t->token == ENDMARKER) return tree_head;
 
         if (t->token != LABEL)
         {
-            // instead of another (or any) label+block, we can just reach the end.
-            // if any block has been parsed before then that is legal syntax,
-            // and if not tree_head would still be NUL, like any error.
-            if (t->token == ENDMARKER) return tree_head;
-
             printSyntaxError(t, E_MISSING_LABEL);
             return NULL;
         }
@@ -101,11 +106,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
         new_l = LabelNode_init(newstr(t->str, t->len));
 
         // LPAR
-        if (!Tokenizer_next(t))
-        {
-            printSyntaxError(t, t->err);
-            return NULL;
-        }
+        if (!nextToken(t, true)) return NULL;
 
         if (t->token != LPAR)
         {
@@ -119,11 +120,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
 
         while (true)
         {
-            if (!Tokenizer_next(t))
-            {
-                printSyntaxError(t, t->err);
-                return NULL;
-            }
+            if (!nextToken(t, true)) return NULL;
 
             switch (t->token)
             {
