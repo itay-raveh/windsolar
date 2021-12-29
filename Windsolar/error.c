@@ -4,7 +4,7 @@
 
 const char *const error_msg[] = {
         "Everything is OK... why is there an error?",
-        "Unexpected char for this location",
+        "Can not parse number, does it have multiple decimal points?",
         "A string has been opened but was never closed",
         "A comment has been opened but was never closed",
         "Expected a LABEL here, found something else",
