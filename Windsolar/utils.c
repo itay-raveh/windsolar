@@ -12,3 +12,11 @@ void *malloc_s(size_t size)
     if (p == NULL) EXIT_WITH_MSG(EXIT_FAILURE, "%s", "Error: memory allocation error");
     return p;
 }
+
+char *newstr(char *const restrict src, const size_t len)
+{
+    char *str = (char *) malloc_s(len + 1);
+    if (len > 0) strncpy(str, src, len);
+    str[len] = '\0';
+    return str;
+}

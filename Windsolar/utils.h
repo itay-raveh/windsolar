@@ -17,4 +17,13 @@ void *malloc_s(size_t size);
 
 #define NEW(T) ((T*)malloc_s(sizeof(T)))
 
+/**
+ * Dynamically a allocate a new string as a copy of the source
+ *
+ * @param src - buffer to copy from
+ * @param len - length of string
+ * @return ptr to the new string
+ */
+char *newstr(char *restrict src, size_t len);
+
 #endif //WINDSOLAR_UTILS_H
