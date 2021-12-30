@@ -45,7 +45,7 @@ LabelNode *LabelNode_init(char *label);
 
 void LabelNode_free(LabelNode *ln);
 
-LabelNode *ParseTree_fromTokenizer(Tokenizer *restrict t);
+LabelNode *ParseTree_fromTokenizer(Tokenizer *restrict t, bool verbose);
 
 void ParseTree_free(LabelNode *restrict head);
 

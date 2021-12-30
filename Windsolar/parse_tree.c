@@ -62,9 +62,11 @@ void printSyntaxError(Tokenizer *const restrict t, Error e)
 
 void printToken(Tokenizer *const restrict t)
 {
+    char pos[15];
+    sprintf(pos, "%zu,%zu-%zu", t->lineno, t->charno - t->len, t->charno - 1);
+
     char *str = newstr(t->str, t->len);
-    printf("line %2zu, chars %3lu to %3zu:\t\t%-7s\t\t%s\n", t->lineno, t->charno - t->len, t->charno - 1,
-           token_names[t->token], str);
+    printf("%-15s %-15s '%s'\n", pos, token_names[t->token], str);
     free(str);
 }
 
@@ -80,7 +82,7 @@ bool nextToken(Tokenizer *const restrict t, bool verbose)
     return true;
 }
 
-LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
+LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
 {
     LabelNode *tree_head = NULL, *last_l, *new_l;
 
@@ -93,7 +95,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
         // Any deviation should raise an error.
 
         // LABEL or ENDMARKER
-        if (!nextToken(t, true)) return NULL;
+        if (!nextToken(t, verbose)) return NULL;
 
         if (t->token == ENDMARKER) return tree_head;
 
@@ -106,7 +108,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
         new_l = LabelNode_init(newstr(t->str, t->len));
 
         // LPAR
-        if (!nextToken(t, true)) return NULL;
+        if (!nextToken(t, verbose)) return NULL;
 
         if (t->token != LPAR)
         {
@@ -120,7 +122,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t)
 
         while (true)
         {
-            if (!nextToken(t, true)) return NULL;
+            if (!nextToken(t, verbose)) return NULL;
 
             switch (t->token)
             {
@@ -175,8 +177,11 @@ void ParseTree_print(LabelNode *restrict head)
     for (; head != NULL; head = head->next)
     {
         printf("{LabelNode | %s}", head->label);
+
         for (InstNode *block_head = head->block_head; block_head != NULL; block_head = block_head->next)
             printf(" -> {InstNode | %s | %s}", token_names[block_head->type], block_head->str);
-        if (head->next) puts("\n           |\n           V"); else puts("");
+
+        if (head->next) puts("\n           |\n           V");
+        else puts("");
     }
 }
