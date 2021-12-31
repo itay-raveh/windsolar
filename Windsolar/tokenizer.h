@@ -13,7 +13,6 @@
 typedef struct
 {
     Reader *reader;         // Reader of input to tokenize
-    bool in_block;          // Is the tokenizer currently inside a command block
     Token token;            // Current token type
     char *str;              // Start of current token
     size_t len;             // Length of the current token
