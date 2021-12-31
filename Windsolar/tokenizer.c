@@ -16,7 +16,6 @@ Tokenizer *Tokenizer_init(Reader *const restrict r)
 
     Tokenizer *t = NEW(Tokenizer);
     t->reader = r;
-    t->in_block = 0;
     t->token = -1;
     t->str = NULL;
     t->len = 0;
