@@ -3,11 +3,10 @@
 //
 
 #include <stdlib.h>     // free()
+#include <stdio.h>      // printf(), puts()
 #include "parse_tree.h"
 #include "utils.h"      // NEW()
 #include "macros.h"     // TRACE()
-#include <string.h>
-#include <stdio.h>
 
 
 InstNode *InstNode_init(Token type, char *str)
@@ -94,12 +93,14 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
         //
         // Any deviation should raise an error.
 
-        // LABEL or ENDMARKER
-        if (!nextToken(t, verbose)) return NULL;
+        // NAME (label) or ENDMARKER
+        if (!nextToken(t, verbose))
+            return NULL;
 
-        if (t->token == ENDMARKER) return tree_head;
+        if (t->token == T_ENDMARKER)
+            return tree_head;
 
-        if (t->token != LABEL)
+        if (t->token != T_NAME)
         {
             printSyntaxError(t, E_MISSING_LABEL);
             return NULL;
@@ -110,7 +111,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
         // LPAR
         if (!nextToken(t, verbose)) return NULL;
 
-        if (t->token != LPAR)
+        if (t->token != T_LPAR)
         {
             printSyntaxError(t, E_MISSING_LPAR);
             return NULL;
@@ -118,7 +119,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
 
         // Instructions and RPAR
         InstNode *block_head = NULL, *last_i, *new_i;
-        Token last_t = LPAR;
+        Token last_t = T_LPAR;
 
         while (true)
         {
@@ -126,20 +127,22 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
 
             switch (t->token)
             {
-                case LPAR:
-                case LABEL:
-                    // should already be stopped at tokenizer, but still
-                    printSyntaxError(t, t->err);
+                case T_LPAR:
+                    // currently sub blocks are not supported
+                    printSyntaxError(t, E_SUB_BLOCKS_UNSUPPORTED);
                     return NULL;
-                case RPAR:
+                case T_RPAR:
                     goto end_loop;
-                case SEMICOL:
-                    last_t = SEMICOL;
+                case T_SEMICOL:
+                    last_t = T_SEMICOL;
                     break;
-                case STRING:
-                case NUMBER:
-                case CMD:
-                    if (last_t != LPAR && last_t != SEMICOL)
+                case T_ENDMARKER:
+                    printSyntaxError(t, E_UNCLOSED_BLOCK);
+                    return NULL;
+                case T_STRING:
+                case T_NUMBER:
+                case T_NAME: // (command)
+                    if (last_t != T_LPAR && last_t != T_SEMICOL)
                     {
                         printSyntaxError(t, E_MISSING_SEMICOL);
                         return NULL;
@@ -155,9 +158,6 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
 
                     last_t = t->token;
                     break;
-                case ENDMARKER:
-                    printSyntaxError(t, E_UNCLOSED_BLOCK);
-                    return NULL;
             }
         }
         end_loop:
