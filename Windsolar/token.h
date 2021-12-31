@@ -7,9 +7,9 @@
 
 typedef enum
 {
-    LPAR, RPAR, SEMICOL, STRING, NUMBER, LABEL, CMD, ENDMARKER
+    T_LPAR, T_RPAR, T_SEMICOL, T_STRING, T_NUMBER, T_NAME, T_ENDMARKER
 } Token;
 
-extern const char *const token_names[8];
+extern const char *const token_names[];
 
 #endif //WINDSOLAR_TOKEN_H
