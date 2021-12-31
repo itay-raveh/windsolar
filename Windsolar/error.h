@@ -14,7 +14,8 @@ typedef enum
     E_MISSING_LABEL,
     E_MISSING_LPAR,
     E_MISSING_SEMICOL,
-    E_UNCLOSED_BLOCK
+    E_UNCLOSED_BLOCK,
+    E_SUB_BLOCKS_UNSUPPORTED
 } Error;
 
 extern const char *const error_msg[];

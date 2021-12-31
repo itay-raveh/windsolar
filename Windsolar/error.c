@@ -7,8 +7,9 @@ const char *const error_msg[] = {
         "Can not parse number, does it have multiple decimal points?",
         "A string has been opened but was never closed",
         "A comment has been opened but was never closed",
-        "Expected a LABEL here, found something else",
+        "Expected a Label here, found something else",
         "Expected a '(' here, found something else",
         "Expected a ';' here, found something else",
-        "This code block was never close with a ')'"
+        "This code block was never closed",
+        "Sub blocks are not currently supported"
 };
