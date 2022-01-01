@@ -62,7 +62,7 @@ void printSyntaxError(Tokenizer *const restrict t, Error e)
 void printToken(Tokenizer *const restrict t)
 {
     char pos[15];
-    sprintf(pos, "%zu,%zu-%zu", t->lineno, t->charno - t->len, t->charno - 1);
+    sprintf(pos, "%zu,%zu-%zu", t->lineno, t->charno - t->len - 1, t->charno - 2);
 
     char *str = newstr(t->str, t->len);
     printf("%-15s %-15s '%s'\n", pos, token_names[t->token], str);
