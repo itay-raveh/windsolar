@@ -29,23 +29,23 @@ Reader *Reader_fromFile(const char *restrict fname, size_t fsize);
 /**
  * Free a dynamically allocated Reader.
  *
- * @param fr - Reader to free
+ * @param r - Reader to free
  */
-void Reader_free(Reader *restrict fr);
+void Reader_free(Reader *restrict r);
 
 /**
  * Get ptr to current char
- * @param fr - Reader
+ * @param r - Reader
  * @return ptr to char from the buffer or NULL
  */
-char *Reader_curr(const Reader *restrict fr);
+char *Reader_curr(const Reader *restrict r);
 
 /**
  * Move one char up the buffer and return it.
  *
- * @param fr - Reader
+ * @param r - Reader
  * @return ptr to char from the buffer or NULL
  */
-char *Reader_next(Reader *restrict fr);
+char *Reader_next(Reader *restrict r);
 
 #endif //WINDSOLAR_READER_H

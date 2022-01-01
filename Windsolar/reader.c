@@ -38,38 +38,38 @@ Reader *Reader_fromFile(const char *restrict fname, size_t size)
     return fr;
 }
 
-inline void Reader_free(Reader *const restrict fr)
+inline void Reader_free(Reader *const restrict r)
 {
-    assert(fr);
+    assert(r);
     TRACE("%s", "free Reader\n");
 
-    free(fr->buff);
-    free(fr);
+    free(r->buff);
+    free(r);
 }
 
-inline char *Reader_curr(const Reader *const restrict fr)
+inline char *Reader_curr(const Reader *const restrict r)
 {
-    assert(fr);
+    assert(r);
 
-    return fr->curr > fr->size ? NULL : &(fr->buff[fr->curr]);
+    return r->curr > r->size ? NULL : &(r->buff[r->curr]);
 }
 
-char *Reader_next(Reader *const restrict fr)
+char *Reader_next(Reader *const restrict r)
 {
-    assert(fr);
-    assert(fr->curr < 0 || fr->curr <= fr->size);
+    assert(r);
+    assert(r->curr < 0 || r->curr <= r->size);
 
-    if (fr->curr >= fr->size) return NULL;
+    if (r->curr >= r->size) return NULL;
 
-    fr->curr++;
-    char *c = &(fr->buff[fr->curr]);
+    r->curr++;
+    char *c = &(r->buff[r->curr]);
 
     if (*c == '\n')
     {
-        fr->lineno++;
-        fr->charno = 0;
+        r->lineno++;
+        r->charno = 0;
     }
-    fr->charno++;
+    r->charno++;
 
     return c;
 }
