@@ -34,9 +34,14 @@ inline void Tokenizer_free(Tokenizer *const restrict t)
     free(t);
 }
 
-bool islabel(const char c)
+bool isSingleCharToken(const char c)
 {
-    return (c == '_' || c == '-' || isalpha(c));
+    return (c == '(' || c == ')' || c == ';' || c == '\0');
+}
+
+bool isLegalNameChar(const char c)
+{
+    return (c != '#' && c != '"' && !isspace(c) && !isSingleCharToken(c));
 }
 
 bool Tokenizer_next(Tokenizer *const restrict t)
@@ -45,18 +50,15 @@ bool Tokenizer_next(Tokenizer *const restrict t)
     #define CURRC (Reader_curr(t->reader))
     assert(t);
 
-    char c;
-
     skip_spaces:
-    do c = *(t->reader->curr == 0 ? CURRC : NEXTC);
-    while (isspace(c));
+    while (isspace(*CURRC)) NEXTC;
 
     t->lineno = t->reader->lineno;
     t->charno = t->reader->charno;
-
-    // most common values
     t->str = CURRC;
     t->len = 1;
+
+    char c = *CURRC;
 
     // skip comments
     if (c == '#')
@@ -68,113 +70,89 @@ bool Tokenizer_next(Tokenizer *const restrict t)
         {
             t->err = E_UNCLOSED_COMMENT;
             return false;
-        } else goto skip_spaces;
-    }
-
-    // ENDMARKER
-    if (c == '\0')
-    {
-        t->str = NULL;
-        t->len = 0;
-        t->token = ENDMARKER;
-        return true;
-    }
-
-    if (!t->in_block)
-    {
-        // LPAR
-        if (c == '(')
-        {
-            t->in_block = true;
-            t->token = LPAR;
-            return true;
-        }
-
-        // LABEL
-        if (islabel(c))
-        {
-            t->len = 0;
-            while (islabel(*CURRC))
-            {
-                NEXTC;
-                t->len++;
-            }
-            t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
-            t->charno = t->reader->charno - 1;
-            t->token = LABEL;
-            return true;
-        }
-
-        t->err = E_UNEXPECTED_CHAR;
-        return false;
-    }
-
-    // RPAR
-    if (c == ')')
-    {
-        t->in_block = false;
-        t->token = RPAR;
-        return true;
-    }
-
-    // SEMICOL
-    if (c == ';')
-    {
-        t->token = SEMICOL;
-        return true;
-    }
-
-    // NUMBER
-    if (isdigit(c))
-    {
-        t->len = 0;
-        while (isdigit(*CURRC))
+        } else
         {
             NEXTC;
-            t->len++;
+            goto skip_spaces;
         }
-        t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
-        t->charno = t->reader->charno - 1;
-        t->token = NUMBER;
+
+    }
+
+    if (isSingleCharToken(c))
+    {
+        switch (c)
+        {
+            case ';':
+                t->token = T_SEMICOL;
+                break;
+            case '(':
+                t->token = T_LPAR;
+                break;
+            case ')':
+                t->token = T_RPAR;
+                break;
+            case '\0':
+                t->token = T_ENDMARKER;
+                return true;
+            default:
+                assert(false); // Should be impossible
+        }
+
+        NEXTC;
         return true;
     }
 
-    // STRING
     if (c == '"')
     {
+        t->token = T_STRING;
+
         do
         {
             c = *NEXTC;
             t->len++;
         } while (c != '"' && c != '\0');
-        NEXTC;
 
         if (c == '\0')
         {
             t->err = E_UNCLOSED_STRING;
             return false;
         }
-        t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
-        t->charno = t->reader->charno - 1;
-        t->token = STRING;
-        return true;
-    }
 
-    // CMD
-    if (isalpha(c))
+        NEXTC;
+
+    } else if (isdigit(c))
     {
+        t->token = T_NUMBER;
+
+        bool dot_seen = false;
         t->len = 0;
-        while (isalnum(*CURRC))
+        do
         {
-            NEXTC;
+            c = *NEXTC;
             t->len++;
-        }
-        t->lineno = t->reader->lineno - (*CURRC == '\n' ? 1 : 0);
-        t->charno = t->reader->charno - 1;
-        t->token = CMD;
-        return true;
+
+            if (c == '.')
+            {
+                if (dot_seen)
+                {
+                    t->err = E_UNPARSABLE_NUMBER;
+                    return false;
+                } else dot_seen = true;
+            }
+        } while (isdigit(c) || c == '.');
+    } else
+    {
+        t->token = T_NAME;
+
+        t->len = 0;
+        do
+        {
+            c = *NEXTC;
+            t->len++;
+        } while (isLegalNameChar(c));
     }
 
-    t->err = E_UNEXPECTED_CHAR;
-    return false;
+    t->lineno = t->reader->lineno;
+    t->charno = t->reader->charno;
+    return true;
 }
