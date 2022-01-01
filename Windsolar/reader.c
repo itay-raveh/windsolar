@@ -27,14 +27,18 @@ Reader *Reader_fromFile(const char *restrict fname, size_t size)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not open %s\n", fname);
 
     size_t read_bytes = fread(r->buff, sizeof(char), size, f);
-
     int err = ferror(f);
     fclose(f);
-
     if (err != 0 || read_bytes != size)
         EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not read from %s\n", fname);
 
     r->buff[size] = '\0';
+
+    // since lineno is advanced in the Reader_next method,
+    // a newline at the start of the file will not be counted
+    if (*(r->buff) == '\n')
+        r->lineno++;
+
     return r;
 }
 
