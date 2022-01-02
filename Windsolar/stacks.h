@@ -29,7 +29,7 @@ typedef struct data_frame_t
 
 STACK_DECL(DataStack, DataFrame)
 
-//void DataStack_print(DataStack *ds, int limit);
+void DataStack_print(DataStack *ds, size_t limit);
 
 typedef struct program_frame_t
 {
@@ -38,5 +38,7 @@ typedef struct program_frame_t
 } ProgramFrame;
 
 STACK_DECL(ProgramStack, ProgramFrame)
+
+void ProgramStack_print(ProgramStack *ps, size_t limit);
 
 #endif //WINDSOLAR_STACKS_H
