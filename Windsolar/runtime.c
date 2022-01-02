@@ -3,22 +3,31 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "runtime.h"
 #include "commands.h"
 
-void mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds)
+bool mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds)
 {
     DataFrame main = {.is_number = false, .str = "MAIN"};
     DataStack_push(ds, main);
 
+    DataStack_print(ds, 5);
+    ProgramStack_print(ps, 5);
+
     if (!execCommand(pt, ps, ds, "CALL"))
     {
         fprintf(stderr, "You must define a 'MAIN' subroutine where execution can start\n");
-        return;
+        return false;
     }
 
     while (ps->len > 0)
     {
+
+        puts("");
+        DataStack_print(ds, 5);
+        ProgramStack_print(ps, 5);
+
         ProgramFrame p = ProgramStack_pop(ps);
         if (p.type == T_NUMBER)
         {
@@ -31,7 +40,8 @@ void mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds)
             DataStack_push(ds, d);
         } else if (p.type == T_NAME)
         {
-            if (!execCommand(pt, ps, ds, p.str)) return;
+            if (!execCommand(pt, ps, ds, p.str)) return false;
         }
     }
+    return true;
 }
