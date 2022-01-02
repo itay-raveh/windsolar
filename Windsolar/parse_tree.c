@@ -69,7 +69,7 @@ void printToken(Tokenizer *const restrict t)
     free(str);
 }
 
-bool nextToken(Tokenizer *const restrict t, bool verbose)
+bool nextToken(Tokenizer *const restrict t, bool print)
 {
     if (!Tokenizer_next(t))
     {
@@ -77,11 +77,11 @@ bool nextToken(Tokenizer *const restrict t, bool verbose)
         return false;
     }
 
-    if (verbose) printToken(t);
+    if (print) printToken(t);
     return true;
 }
 
-LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
+LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool printTokens)
 {
     LabelNode *tree_head = NULL, *last_l, *new_l;
 
@@ -94,7 +94,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
         // Any deviation should raise an error.
 
         // NAME (label) or ENDMARKER
-        if (!nextToken(t, verbose))
+        if (!nextToken(t, printTokens))
             return NULL;
 
         if (t->token == T_ENDMARKER)
@@ -109,7 +109,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
         new_l = LabelNode_init(newstr(t->str, t->len));
 
         // LPAR
-        if (!nextToken(t, verbose)) return NULL;
+        if (!nextToken(t, printTokens)) return NULL;
 
         if (t->token != T_LPAR)
         {
@@ -123,7 +123,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool verbose)
 
         while (true)
         {
-            if (!nextToken(t, verbose)) return NULL;
+            if (!nextToken(t, printTokens)) return NULL;
 
             switch (t->token)
             {
