@@ -120,26 +120,41 @@ bool Tokenizer_next(Tokenizer *const restrict t)
 
         NEXTC;
 
-    } else if (isdigit(c))
+    } else if (isdigit(c) || c == '-')
     {
         t->token = T_NUMBER;
 
-        bool dot_seen = false;
         t->len = 0;
         do
         {
             c = *NEXTC;
             t->len++;
+        } while (isdigit(c));
 
-            if (c == '.')
+        // if the decimal point is right after the minus
+        if (*(t->str) == '-' && t->len == 1)
+        {
+            t->err = E_UNPARSABLE_NUMBER;
+            return false;
+        }
+
+        if (c == '.')
+        {
+            size_t len_before = t->len;
+            do
             {
-                if (dot_seen)
-                {
-                    t->err = E_UNPARSABLE_NUMBER;
-                    return false;
-                } else dot_seen = true;
+                c = *NEXTC;
+                t->len++;
+            } while (isdigit(c));
+
+            // if there were no digits after the point
+            if (t->len == len_before + 1)
+            {
+                t->err = E_UNPARSABLE_NUMBER;
+                return false;
             }
-        } while (isdigit(c) || c == '.');
+        }
+
     } else
     {
         t->token = T_NAME;

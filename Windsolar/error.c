@@ -4,12 +4,12 @@
 
 const char *const error_msg[] = {
         "Everything is OK... why is there an error?",
-        "Can not parse number, does it have multiple decimal points?",
+        "Can not parse this number, check placement of minus sign or decimal point",
         "A string has been opened but was never closed",
         "A comment has been opened but was never closed",
         "Expected a Label here, found something else",
         "Expected a '(' here, found something else",
         "Expected a ';' here, found something else",
-        "This code block was never closed",
+        "A code block was never closed",
         "Sub blocks are not currently supported"
 };

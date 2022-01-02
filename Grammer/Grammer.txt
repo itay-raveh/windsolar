@@ -4,5 +4,5 @@
 <ints> := STRING | NUMBER | NAME
 
 STRING := '"' ASCII* '"'
-NUMBER := DIGIT* ('.' DIGIT*)
-NAME := ASCII other than '(', ')', ';', '"', '#' and whitespace
+NUMBER := ('-') DIGIT* ('.' DIGIT*)
+NAME := ASCII other than '(', ')', ';', '"', '#', '-' and whitespace
