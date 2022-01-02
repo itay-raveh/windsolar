@@ -154,7 +154,6 @@ bool Tokenizer_next(Tokenizer *const restrict t)
                 return false;
             }
         }
-
     } else
     {
         t->token = T_NAME;
