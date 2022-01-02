@@ -50,14 +50,15 @@ bool Tokenizer_next(Tokenizer *const restrict t)
     assert(t);
 
     skip_spaces:
-    while (isspace(*CURRC)) NEXTC;
+    if (isspace(*CURRC))
+        while (isspace(*NEXTC));
 
     t->lineno = t->reader->lineno;
     t->charno = t->reader->charno;
     t->str = CURRC;
     t->len = 1;
 
-    char c = *CURRC;
+    char c = *(t->str);
 
     // skip comments
     if (c == '#')
