@@ -27,7 +27,7 @@ typedef struct
  * @param r - Reader to read from
  * @return ptr to Tokenizer
  */
-Tokenizer *Tokenizer_init(Reader *restrict r);
+Tokenizer *Tokenizer_fromReader(Reader *restrict r);
 
 /**
  * Free a dynamically allocated Tokenizer
