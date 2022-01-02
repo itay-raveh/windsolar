@@ -84,9 +84,11 @@ int main(int argc, char *argv[])
     ProgramStack *ps = ProgramStack_new();
     DataStack *ds = DataStack_new();
 
-    mainloop(pt, ps, ds);
+    bool res = mainloop(pt, ps, ds);
 
     ParseTree_free(pt);
     ProgramStack_free(ps);
     DataStack_free(ds);
+
+    return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
