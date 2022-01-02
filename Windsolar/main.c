@@ -2,7 +2,7 @@
 #include <unistd.h>         // access(), F_OK, R_OK
 #include <string.h>         // strcmp
 #include "macros.h"         // EXIT_WITH_MSG()
-#include "utils.h"
+#include "reader.h"
 #include "tokenizer.h"
 #include "parse_tree.h"
 
