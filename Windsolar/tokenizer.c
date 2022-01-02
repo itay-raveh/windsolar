@@ -53,14 +53,10 @@ bool Tokenizer_next(Tokenizer *const restrict t)
     if (isspace(*CURRC))
         while (isspace(*NEXTC));
 
-    t->lineno = t->reader->lineno;
-    t->charno = t->reader->charno;
     t->str = CURRC;
-    t->len = 1;
-
     char c = *(t->str);
 
-    // skip comments
+    // skip comment
     if (c == '#')
     {
         do c = *NEXTC;
@@ -80,6 +76,11 @@ bool Tokenizer_next(Tokenizer *const restrict t)
 
     if (isSingleCharToken(c))
     {
+
+        t->lineno = t->reader->lineno;
+        t->charno = t->reader->charno + 1;
+        t->len = 1;
+
         switch (c)
         {
             case ';':
@@ -102,10 +103,13 @@ bool Tokenizer_next(Tokenizer *const restrict t)
         return true;
     }
 
+    t->len = 0;
+
     if (c == '"')
     {
         t->token = T_STRING;
 
+        t->str = NEXTC;
         do
         {
             c = *NEXTC;
@@ -118,13 +122,12 @@ bool Tokenizer_next(Tokenizer *const restrict t)
             return false;
         }
 
+        // second "
         NEXTC;
-
     } else if (isdigit(c) || c == '-')
     {
         t->token = T_NUMBER;
 
-        t->len = 0;
         do
         {
             c = *NEXTC;
@@ -158,15 +161,14 @@ bool Tokenizer_next(Tokenizer *const restrict t)
     {
         t->token = T_NAME;
 
-        t->len = 0;
-        do
+        while (isLegalNameChar(c))
         {
             c = *NEXTC;
             t->len++;
-        } while (isLegalNameChar(c));
+        }
     }
 
     t->lineno = t->reader->lineno;
-    t->charno = t->reader->charno;
+    t->charno = t->reader->charno - (t->token == T_STRING ? 1 : 0);
     return true;
 }
