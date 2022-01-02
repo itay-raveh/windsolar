@@ -9,7 +9,7 @@
 #include "utils.h"      // NEW()
 #include "macros.h"     // TRACE()
 
-Tokenizer *Tokenizer_init(Reader *const restrict r)
+Tokenizer *Tokenizer_fromReader(Reader *const restrict r)
 {
     assert(r);
     TRACE("%s", "init Tokenizer\n");
