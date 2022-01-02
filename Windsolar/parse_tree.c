@@ -176,10 +176,10 @@ void ParseTree_print(LabelNode *restrict head)
 {
     for (; head != NULL; head = head->next)
     {
-        printf("{LabelNode | %s}", head->label);
+        printf("{LabelNode | '%s'}", head->label);
 
         for (InstNode *block_head = head->block_head; block_head != NULL; block_head = block_head->next)
-            printf(" -> {InstNode | %s | %s}", token_names[block_head->type], block_head->str);
+            printf(" -> {InstNode | %s | '%s'}", token_names[block_head->type], block_head->str);
 
         if (head->next) puts("\n           |\n           V");
         else puts("");
