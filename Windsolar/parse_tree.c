@@ -9,7 +9,7 @@
 #include "macros.h"     // TRACE()
 
 
-InstNode *InstNode_init(Token type, char *str)
+InstNode *InstNode_new(Token type, char *str)
 {
     InstNode *in = NEW(InstNode);
     in->type = type;
@@ -28,7 +28,7 @@ void InstNode_free(InstNode *const restrict in)
     }
 }
 
-LabelNode *LabelNode_init(char *label)
+LabelNode *LabelNode_new(char *label)
 {
     LabelNode *ln = NEW(LabelNode);
     ln->label = label;
@@ -106,7 +106,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool printTokens
             return NULL;
         }
 
-        new_l = LabelNode_init(newstr(t->str, t->len));
+        new_l = LabelNode_new(newstr(t->str, t->len));
 
         // LPAR
         if (!nextToken(t, printTokens)) return NULL;
@@ -148,7 +148,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool printTokens
                         return NULL;
                     }
 
-                    new_i = InstNode_init(t->token, newstr(t->str, t->len));
+                    new_i = InstNode_new(t->token, newstr(t->str, t->len));
                     if (block_head == NULL) block_head = last_i = new_i;
                     else
                     {

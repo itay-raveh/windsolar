@@ -37,7 +37,7 @@ typedef struct inst_node_t
  * This should be a dynamically allocated string, which will be freed along with the InstNode.
  * @return ptr to the new InstNode.
  */
-InstNode *InstNode_init(Token type, char *str);
+InstNode *InstNode_new(Token type, char *str);
 
 /**
  * Free the InstNode and it's str, for the given node and every node following.
@@ -61,7 +61,7 @@ typedef struct label_node_t
  * This should be a dynamically allocated string, which will be freed along with the LabelNode.
  * @return ptr to the new LabelNode.
  */
-LabelNode *LabelNode_init(char *label);
+LabelNode *LabelNode_new(char *label);
 
 /**
  * Free the LabelNode, the label, and the entire list of InstNodes connected to it,
