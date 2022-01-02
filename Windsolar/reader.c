@@ -55,7 +55,7 @@ char *Reader_curr(const Reader *const restrict r)
 {
     assert(r);
 
-    return r->curr >= r->size ? NULL : &(r->buff[r->curr]);
+    return r->curr > r->size ? NULL : &(r->buff[r->curr]);
 }
 
 char *Reader_next(Reader *const restrict r)
@@ -63,7 +63,7 @@ char *Reader_next(Reader *const restrict r)
     assert(r);
     assert(r->curr < 0 || r->curr <= r->size);
 
-    if (r->curr >= r->size) return NULL;
+    if (r->curr > r->size) return NULL;
 
     r->curr++;
     char *c = &(r->buff[r->curr]);
