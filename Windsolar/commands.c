@@ -62,8 +62,8 @@ bool WRITE(DataStack *ds)
     if (d.is_number)
     {
         if (d.number == (int64_t) d.number) printf("%ld", (int64_t) d.number);
-        else printf("%f", d.number);
-    } else printf("%s", d.str);
+        else printf("%f\n", d.number);
+    } else printf("%s\n", d.str);
 
     return true;
 }
