@@ -1,5 +1,5 @@
-<input> := <function> , <function>*
-<function> := <label> , '(' , (<inst> , ';')* , <inst> , ')'
+<input> := <subroutine> , <subroutine>*
+<subroutine> := <label> , '(' , (<inst> , ';')* , <inst> , ')'
 <label> := NAME
 <ints> := STRING | NUMBER | NAME
 
