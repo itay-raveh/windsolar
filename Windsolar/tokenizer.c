@@ -30,7 +30,6 @@ inline void Tokenizer_free(Tokenizer *const restrict t)
     assert(t);
     TRACE("%s", "free Tokenizer\n");
 
-    Reader_free(t->reader);
     free(t);
 }
 
