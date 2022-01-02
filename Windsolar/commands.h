@@ -9,6 +9,10 @@
 #include "stacks.h"
 #include "parse_tree.h"
 
+/* ------------------- Flow Control ------------------- */
+bool CALL(LabelNode *pt, ProgramStack *ps, DataStack *ds);
+
+/* ------------------------ IO ------------------------ */
 /* pop the top element from the ds and print it */
 bool WRITE(DataStack *ds);
 
