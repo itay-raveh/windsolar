@@ -8,6 +8,6 @@
 #include "stacks.h"
 #include "parse_tree.h"
 
-void mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds);
+bool mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds);
 
 #endif //WINDSOLAR_RUNTIME_H
