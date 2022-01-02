@@ -70,9 +70,11 @@ int main(int argc, char *argv[])
     char *fname = parse_args(argc, argv);
     size_t fsize = verify_file(fname);
 
-    Tokenizer *t = Tokenizer_init(Reader_fromFile(fname, fsize));
-
+    Reader *r = Reader_fromFile(fname, fsize);
+    Tokenizer *t = Tokenizer_fromReader(r);
     LabelNode *pt = ParseTree_fromTokenizer(t, true);
+
+    Reader_free(r);
     Tokenizer_free(t);
 
     ParseTree_print(pt);
