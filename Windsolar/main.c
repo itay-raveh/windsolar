@@ -5,6 +5,8 @@
 #include "reader.h"
 #include "tokenizer.h"
 #include "parse_tree.h"
+#include "stacks.h"
+#include "runtime.h"
 
 /**
  * Parse command line args.
@@ -78,5 +80,13 @@ int main(int argc, char *argv[])
     Tokenizer_free(t);
 
     ParseTree_print(pt);
+
+    ProgramStack *ps = ProgramStack_new();
+    DataStack *ds = DataStack_new();
+
+    mainloop(pt, ps, ds);
+
     ParseTree_free(pt);
+    ProgramStack_free(ps);
+    DataStack_free(ds);
 }
