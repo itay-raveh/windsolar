@@ -38,12 +38,15 @@ bool CALL(LabelNode *pt, ProgramStack *ps, DataStack *ds)
         return false;
     }
 
+    ProgramStack *reverse = ProgramStack_new();
     for (InstNode *inst = pt->block_head; inst != NULL; inst = inst->next)
     {
         ProgramFrame pf = {.type = inst->type, .str = inst->str};
-        ProgramStack_push(ps, pf);
+        ProgramStack_push(reverse, pf);
     }
+    do ProgramStack_push(ps, ProgramStack_pop(reverse)); while (reverse->len > 0);
 
+    ProgramStack_free(reverse);
     return true;
 }
 
