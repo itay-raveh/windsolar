@@ -50,7 +50,7 @@
         return stck->data[stck->len]; \
     }
 
-typedef struct
+typedef struct data_frame_t
 {
     bool is_number;
     double number;
@@ -59,7 +59,7 @@ typedef struct
 
 DECL_STACK(DataStack, DataFrame)
 
-typedef struct
+typedef struct program_frame_t
 {
     Token type;
     char *str;
