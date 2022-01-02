@@ -1,0 +1,8 @@
+<input> := <function> , <function>*
+<function> := <label> , '(' , (<inst> , ';')* , <inst> , ')'
+<label> := NAME
+<ints> := STRING | NUMBER | NAME
+
+STRING := '"' ASCII* '"'
+NUMBER := DIGIT* ('.' DIGIT*)
+NAME := ASCII other than '(', ')', ';', '"', '#' and whitespace
