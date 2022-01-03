@@ -15,6 +15,8 @@ bool CALL(LabelNode *pt, ProgramStack *ps, DataStack *ds);
 /* ------------------------ IO ------------------------ */
 /* pop the top element from the ds and print it */
 bool WRITE(DataStack *ds);
+/* read input from the user and push it to the ds */
+bool READ(DataStack *ds);
 
 /**
  * Execute a given command. If execution fails, a runtime error will be printed.

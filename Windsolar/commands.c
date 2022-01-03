@@ -98,6 +98,24 @@ bool WRITE(DataStack *ds)
 
     return true;
 }
+Add read
+#define MAX_INPUT_LEN 100
+
+bool READ(DataStack *ds)
+{
+    char *inp = malloc_s(MAX_INPUT_LEN);
+    if (fgets(inp, MAX_INPUT_LEN, stdin) == NULL)
+    {
+        printCommandRuntimeError("READ", "Could not read user input");
+        return false;
+    }
+    *strchr(inp, '\n') = '\0';
+
+    DataFrame df = {.is_number = false, .str = inp};
+    DataStack_push(ds, df);
+
+    return true;
+}
 
 bool execCommand(LabelNode *pt, ProgramStack *ps, DataStack *ds, char *command)
 {
