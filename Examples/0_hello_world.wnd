@@ -1,0 +1,2 @@
+# print 'Hello, World!' #
+MAIN ("Hello, World!\n"; WRITE)
