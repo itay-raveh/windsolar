@@ -89,7 +89,8 @@ void DataStack_print(DataStack *ds, size_t limit)
     puts("+");
     printf("O ");
 
-    for (int i = (int)size - 1; i >= 0; i--)
+    int end = (int) ds->len - (int) limit;
+    for (int i = (int) ds->len - 1; i >= (end > 0 ? end : 0); i--)
     {
         if (ds->data[i].is_number)
         {
@@ -133,7 +134,8 @@ void ProgramStack_print(ProgramStack *ps, size_t limit)
     puts("+");
     printf("O ");
 
-    for (int i = (int)size - 1; i >= 0; i--)
+    int end = (int) ps->len - (int) limit;
+    for (int i = (int) ps->len - 1; i >= (end > 0 ? end : 0); i--)
     {
         size_t orig_str_len = strlen(ps->data[i].str);
         size_t capped_str_len = MIN(orig_str_len, CONTENT_W);
