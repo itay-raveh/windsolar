@@ -53,7 +53,7 @@ STACK_IMPL(ProgramStack, ProgramFrame)
 
 #define FRAME_W 16
 #define CONTENT_W (FRAME_W - 2)
-#define CAP(val, cap) (val > cap ? cap : val)
+#define MIN(val, cap) (val > cap ? cap : val)
 
 char *string_repr(char *src, size_t len, size_t max_len)
 {
@@ -100,7 +100,7 @@ void DataStack_print(DataStack *ds, size_t limit)
         } else
         {
             size_t orig_str_len = strlen(ds->data[i].str);
-            size_t capped_str_len = CAP(orig_str_len, CONTENT_W);
+            size_t capped_str_len = MIN(orig_str_len, CONTENT_W);
             char *str = string_repr(ds->data[i].str, capped_str_len, CONTENT_W);
             printf("| %*s ", -CONTENT_W, str);
             free(str);
@@ -120,7 +120,7 @@ void DataStack_print(DataStack *ds, size_t limit)
 
 void ProgramStack_print(ProgramStack *ps, size_t limit)
 {
-    size_t size = CAP(ps->len, limit);
+    size_t size = MIN(ps->len, limit);
 
     puts("PROGRAM STACK");
     printf("T ");
@@ -136,7 +136,7 @@ void ProgramStack_print(ProgramStack *ps, size_t limit)
     for (int i = (int)size - 1; i >= 0; i--)
     {
         size_t orig_str_len = strlen(ps->data[i].str);
-        size_t capped_str_len = CAP(orig_str_len, CONTENT_W);
+        size_t capped_str_len = MIN(orig_str_len, CONTENT_W);
 
         char *str;
         if (ps->data[i].type == T_STRING) str = string_repr(ps->data[i].str, capped_str_len, CONTENT_W);
