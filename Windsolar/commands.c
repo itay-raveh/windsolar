@@ -62,8 +62,39 @@ bool WRITE(DataStack *ds)
     if (d.is_number)
     {
         if (d.number == (int64_t) d.number) printf("%ld", (int64_t) d.number);
-        else printf("%f\n", d.number);
-    } else printf("%s\n", d.str);
+        else printf("%f", d.number);
+    } else
+    {
+        char *p = d.str;
+        while (*p != '\0')
+        {
+            if (*p == '\\')
+            {
+                char c;
+                switch (*(p + 1))
+                {
+                    case 'a': c = '\a';
+                        break;
+                    case 'b': c = '\b';
+                        break;
+                    case 'f': c = '\f';
+                        break;
+                    case 'n': c = '\n';
+                        break;
+                    case 'r': c = '\r';
+                        break;
+                    case 't': c = '\t';
+                        break;
+                }
+                putc(c, stdout);
+                p += 2;
+            } else
+            {
+                putc(*p, stdout);
+                p++;
+            }
+        }
+    }
 
     return true;
 }
@@ -74,6 +105,7 @@ bool execCommand(LabelNode *pt, ProgramStack *ps, DataStack *ds, char *command)
 
     if (IS("CALL")) return CALL(pt, ps, ds);
     if (IS("WRITE")) return WRITE(ds);
+    if (IS("READ")) return READ(ds);
 
     printCommandRuntimeError(command, "No such command");
     return false;
