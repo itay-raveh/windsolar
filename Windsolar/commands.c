@@ -98,7 +98,7 @@ bool WRITE(DataStack *ds)
 
     return true;
 }
-Add read
+
 #define MAX_INPUT_LEN 100
 
 bool READ(DataStack *ds)
