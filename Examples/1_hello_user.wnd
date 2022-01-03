@@ -1,0 +1,2 @@
+# Asks the user for their name, then says hello to them #
+MAIN ("Hey! What is your name?\n"; WRITE; READ; "Hello "; WRITE; WRITE; "!\n"; WRITE)
