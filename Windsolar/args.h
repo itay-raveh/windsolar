@@ -14,7 +14,7 @@ typedef struct
     bool printTokens;
     bool printParseTree;
     bool printStacks;
-    uint8_t stackPrintLength;
+    uint64_t stackPrintLength;
 } Args;
 
 Args *Args_fromArgv(uint8_t argc, char *argv[]);
