@@ -17,6 +17,6 @@ Stack *Stack_new();
 void Stack_free(Stack *s, void (*free_item)(void *));
 void Stack_push(Stack *s, void *frame);
 void *Stack_pop(Stack *s);
-void Stack_print(Stack *s, size_t frame_width, size_t frames, void (*print_item)(void *, int16_t));
+void Stack_print(Stack *s, uint16_t frame_width, uint64_t frames, void (*print_item)(void *, uint16_t));
 
 #endif //WINDSOLAR_STACK_H
