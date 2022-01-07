@@ -1,0 +1,3 @@
+# infinite loop #
+MAIN (0; "LOOP"; CALL)
+LOOP (1; ADD; DUP; WRITE; "\n"; WRITE; 0.5; SLEEP; "LOOP"; CALL)
