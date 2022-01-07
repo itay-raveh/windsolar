@@ -37,6 +37,5 @@ Args *Args_fromArgv(uint8_t argc, char *argv[])
 
 void Args_free(Args *a)
 {
-    free(a->inputFileName);
     free(a);
 }
