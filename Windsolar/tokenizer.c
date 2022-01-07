@@ -12,7 +12,6 @@
 Tokenizer *Tokenizer_fromReader(Reader *const restrict r)
 {
     assert(r);
-    TRACE("%s", "init Tokenizer\n");
 
     Tokenizer *t = NEW(Tokenizer);
     t->reader = r;
@@ -28,7 +27,6 @@ Tokenizer *Tokenizer_fromReader(Reader *const restrict r)
 inline void Tokenizer_free(Tokenizer *const restrict t)
 {
     assert(t);
-    TRACE("%s", "free Tokenizer\n");
 
     free(t);
 }
