@@ -53,9 +53,9 @@ void DataFrame_print(DataFrame *df, uint16_t field_width)
     if (df->isNumber)
     {
         if ((int64_t) df->number == df->number)
-            printf("%*.*ld", field_width * -1, field_width, (int64_t) df->number);
+            printf("%*ld", field_width * -1, (int64_t) df->number);
         else
-            printf("%*.*f", field_width * -1, field_width, df->number);
+            printf("%*f", field_width * -1, df->number);
     } else
     {
         char *str = string_repr(df->str, strlen(df->str), field_width);
