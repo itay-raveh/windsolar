@@ -59,3 +59,18 @@ int windsolar(int argc, char *argv[])
 
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
+#ifdef DEBUG
+int main()
+{
+    int argc = 2;
+    char *argv[] = {"windsolar", "/home/itay/windsolar/Examples/1_hello_user.wnd"};
+
+    return windsolar(argc, argv);
+}
+#else
+int main(int argc, char *argv[])
+{
+    return windsolar(argc, argv);
+}
+#endif
