@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "runtime.h"
 #include "commands.h"
 #include "frames.h"
@@ -42,12 +43,13 @@ bool mainloop(LabelNode *pt, Stack *ps, Stack *ds, bool print_stacks, size_t fra
             Stack_push(ds, df);
         } else if (pf->type == T_STRING)
         {
-            DataFrame *df = DataFrame_new(NULL, pf->str);
+            DataFrame *df = DataFrame_new(NULL, newstr(pf->str, strlen(pf->str)));
             Stack_push(ds, df);
         } else if (pf->type == T_NAME)
         {
             if (!execCommand(pt, ps, ds, pf->str)) return false;
         }
+        ProgramFrame_free(pf);
     }
     return true;
 }
