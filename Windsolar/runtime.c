@@ -6,14 +6,16 @@
 #include <stdlib.h>
 #include "runtime.h"
 #include "commands.h"
+#include "frames.h"
+#include "utils.h"
 
-bool mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds)
+
+#define FRAME_W 16
+
+bool mainloop(LabelNode *pt, Stack *ps, Stack *ds, bool print_stacks, size_t frames)
 {
-    DataFrame main = {.is_number = false, .str = "MAIN"};
-    DataStack_push(ds, main);
-
-    DataStack_print(ds, 5);
-    ProgramStack_print(ps, 5);
+    DataFrame *main = DataFrame_new(NULL, newstr("MAIN", 4));
+    Stack_push(ds, main);
 
     if (!execCommand(pt, ps, ds, "CALL"))
     {
@@ -23,24 +25,28 @@ bool mainloop(LabelNode *pt, ProgramStack *ps, DataStack *ds)
 
     while (ps->len > 0)
     {
+        if (print_stacks)
+        {
+            puts("");
+            Stack_print(ds, FRAME_W, frames, (void (*)(void *, int16_t)) DataFrame_print);
+            Stack_print(ps, FRAME_W, frames, (void (*)(void *, int16_t)) ProgramFrame_print);
+            puts("");
+        }
 
-        puts("");
-        DataStack_print(ds, 5);
-        ProgramStack_print(ps, 5);
-
-        ProgramFrame p = ProgramStack_pop(ps);
-        if (p.type == T_NUMBER)
+        ProgramFrame *pf = Stack_pop(ps);
+        if (pf->type == T_NUMBER)
         {
             char *end;
-            DataFrame d = {.is_number = true, .number = strtod(p.str, &end)};
-            DataStack_push(ds, d);
-        } else if (p.type == T_STRING)
+            double number = strtod(pf->str, &end);
+            DataFrame *df = DataFrame_new(&number, NULL);
+            Stack_push(ds, df);
+        } else if (pf->type == T_STRING)
         {
-            DataFrame d = {.is_number = false, .str = p.str};
-            DataStack_push(ds, d);
-        } else if (p.type == T_NAME)
+            DataFrame *df = DataFrame_new(NULL, pf->str);
+            Stack_push(ds, df);
+        } else if (pf->type == T_NAME)
         {
-            if (!execCommand(pt, ps, ds, p.str)) return false;
+            if (!execCommand(pt, ps, ds, pf->str)) return false;
         }
     }
     return true;

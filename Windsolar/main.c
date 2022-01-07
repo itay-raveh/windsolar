@@ -38,14 +38,13 @@ int main(int argc, char *argv[])
         getc(stdin);
     }
 
-    ProgramStack *ps = ProgramStack_new();
-    DataStack *ds = DataStack_new();
-
+    Stack *ps = Stack_new(), *ds = Stack_new();
     bool res = mainloop(pt, ps, ds, a->printStacks, a->stackPrintLength);
 
-    ParseTree_free(pt);
-    ProgramStack_free(ps);
-    DataStack_free(ds);
+    Args_free(a);
+    LabelNode_free(pt);
+    Stack_free(ps, (void (*)(void *)) ProgramFrame_free);
+    Stack_free(ds, (void (*)(void *)) DataFrame_free);
 
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
