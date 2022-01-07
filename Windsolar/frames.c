@@ -50,7 +50,7 @@ ProgramFrame *ProgramFrame_new(Token type, char *str)
 
 void ProgramFrame_free(ProgramFrame *pf)
 {
-    if (pf->type == T_STRING) free(pf->str);
+    free(pf->str);
     free(pf);
 }
 
