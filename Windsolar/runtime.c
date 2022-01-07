@@ -28,9 +28,10 @@ bool mainloop(LabelNode *pt, Stack *ps, Stack *ds, bool print_stacks, size_t fra
     {
         if (print_stacks)
         {
-            puts("");
-            Stack_print(ds, FRAME_W, frames, (void (*)(void *, int16_t)) DataFrame_print);
-            Stack_print(ps, FRAME_W, frames, (void (*)(void *, int16_t)) ProgramFrame_print);
+            puts("\nDATA STACK");
+            Stack_print(ds, FRAME_W, frames, (void (*)(void *, uint16_t)) DataFrame_print);
+            puts("PROGRAM STACK");
+            Stack_print(ps, FRAME_W, frames, (void (*)(void *, uint16_t)) ProgramFrame_print);
             puts("");
         }
 
