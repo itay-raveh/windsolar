@@ -12,11 +12,29 @@
 /* ------------------- Flow Control ------------------- */
 bool CALL(LabelNode *pt, Stack *ps, Stack *ds);
 
+/* -------------------- Arithmetic -------------------- */
+/* pop the top two elements from the dsm add them, and push back */
+bool ADD(Stack *ds);
+/* pop the top two elements from the dsm subtract them, and push back */
+bool SUB(Stack *ds);
+/* pop the top two elements from the dsm multiply them, and push back */
+bool MUL(Stack *ds);
+/* pop the top two elements from the dsm divide them, and push back */
+bool DIV(Stack *ds);
+
+/* ---------------------- Stack ----------------------- */
+/* duplicate the top element */
+bool DUP(Stack *ds);
+
 /* ------------------------ IO ------------------------ */
 /* pop the top element from the ds and print it */
 bool WRITE(Stack *ds);
 /* read input from the user and push it to the ds */
 bool READ(Stack *ds);
+
+/* ---------------------- System ----------------------- */
+/* pop the top element and sleep accordingly */
+bool SLEEP(Stack *ds);
 
 /**
  * Execute a given command. If execution fails, a runtime error will be printed.
