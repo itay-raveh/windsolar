@@ -18,7 +18,7 @@ typedef struct data_frame_t
 
 DataFrame *DataFrame_new(const double *number, char *str);
 void DataFrame_free(DataFrame *df);
-void DataFrame_print(DataFrame *df, int16_t field_width);
+void DataFrame_print(DataFrame *df, uint16_t field_width);
 
 typedef struct program_frame_t
 {
@@ -28,6 +28,6 @@ typedef struct program_frame_t
 
 ProgramFrame *ProgramFrame_new(Token type, char *str);
 void ProgramFrame_free(ProgramFrame *pf);
-void ProgramFrame_print(ProgramFrame *pf, int16_t field_width);
+void ProgramFrame_print(ProgramFrame *pf, uint16_t field_width);
 
 #endif //WINDSOLAR_FRAMES_H
