@@ -10,11 +10,13 @@
 Args *Args_fromArgv(uint8_t argc, char *argv[])
 {
     Args *a = NEW(Args);
-    a->inputFileName = argv[1];
     a->printTokens = false;
     a->printParseTree = false;
     a->printStacks = false;
     a->stackPrintLength = 0;
+
+    a->inputFileName = argv[1];
+    if (a->inputFileName == NULL) return NULL;
 
     for (uint8_t i = 2; i < argc; i++)
     {
