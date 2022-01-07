@@ -47,54 +47,35 @@ void *Stack_pop(Stack *s)
     return s->data[--(s->len)];
 }
 
-void Stack_print(Stack *s, const size_t frame_width, const size_t frames, void (*print_item)(void *, int16_t))
+void Stack_print(Stack *s, const uint16_t frame_width, const uint64_t frames, void (*print_item)(void *, uint16_t))
 {
     assert(s);
 
-    const uint32_t first = s->len - 1;
-    const uint32_t last = s->len > frames ? s->len - frames : 0;
-    const int16_t content_width = frame_width - 2;
+    const int32_t first = s->len - 1;
+    const int32_t last = (s->len > frames ? s->len - frames: 0) - 1;
+    const uint16_t content_width = frame_width - 2;
 
     printf("T ");
-    for (uint32_t i = first; i >= last; i--)
+    for (int32_t i = first; i > last; i--)
     {
         printf("+");
-        for (uint8_t j = 0; j < content_width; j++)
+        for (uint16_t j = 0; j < frame_width; j++)
             printf("-");
     }
     printf("+\nO");
 
-    for (uint32_t i = first; i >= last; i--)
+    for (int32_t i = first; i > last; i--)
     {
         printf(" | ");
         print_item(s->data[i], content_width);
     }
 
-    printf("|\nP ");
-    for (uint32_t i = first; i >= last; i--)
+    printf(" |\nP ");
+    for (int32_t i = first; i > last; i--)
     {
         printf("+");
-        for (uint8_t j = 0; j < content_width; j++)
+        for (uint16_t j = 0; j < frame_width; j++)
             printf("-");
     }
     puts("+");
 }
-
-//char *string_repr(char *src, size_t len, size_t max_len)
-//{
-//    char *str = (char *) malloc_s(len + 3);
-//    size_t new_len = len + 2;
-//
-//    if (new_len <= max_len) strncpy(&(str[1]), src, len);
-//    else
-//    {
-//        strncpy(&(str[1]), src, max_len);
-//        new_len = max_len;
-//        str[new_len - 2] = str[new_len - 3] = str[new_len - 4] = '.';
-//    }
-//
-//    str[new_len - 1] = str[0] = '"';
-//    str[new_len] = '\0';
-//
-//    return str;
-//}
