@@ -2,14 +2,25 @@
 #include <stdlib.h>
 #include "args.h"
 #include "runtime.h"
+#include "frames.h"
 
 
-int main(int argc, char *argv[])
+const char *usage = "windsolar FILENAME [-t] [-p] [-s FRAMES]\n"
+                    "\n"
+                    "A simple, stack-based, toy scripting language.\n"
+                    "See https://github.com/itay-raveh/windsolar for syntax and more.\n"
+                    "\n"
+                    "-t, --print-tokens          While tokenizing the file, print tokens, then wait for user to confirm.\n"
+                    "-p, --print-parse-tree      After parsing the file, print the parse-tree, then wait for user to confirm.\n"
+                    "-s, --print-stacks          Before each instruction is executed, print both stacks, up to FRAMES frames.\n";
+
+
+int windsolar(int argc, char *argv[])
 {
     Args *a = Args_fromArgv(argc, argv);
     if (a == NULL)
     {
-        fprintf(stderr, "USAGE\n");
+        fputs(usage, stderr);
         return EXIT_FAILURE;
     }
 
