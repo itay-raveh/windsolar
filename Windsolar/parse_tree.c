@@ -6,7 +6,6 @@
 #include <stdio.h>      // printf(), puts()
 #include "parse_tree.h"
 #include "utils.h"      // NEW()
-#include "macros.h"     // TRACE()
 
 
 InstNode *InstNode_new(Token type, char *str)
@@ -33,7 +32,7 @@ LabelNode *LabelNode_new(char *label)
     LabelNode *ln = NEW(LabelNode);
     ln->label = label;
     ln->next = NULL;
-    ln->block_head = NULL;
+    ln->blockHead = NULL;
     return ln;
 }
 
@@ -42,16 +41,10 @@ void LabelNode_free(LabelNode *const restrict ln)
     if (ln)
     {
         LabelNode_free(ln->next);
-        if (ln->block_head) InstNode_free(ln->block_head);
+        if (ln->blockHead) InstNode_free(ln->blockHead);
         free(ln->label);
         free(ln);
     }
-}
-
-void ParseTree_free(LabelNode *const restrict head)
-{
-    TRACE("%s\n", "free ParseTree");
-    LabelNode_free(head);
 }
 
 void printSyntaxError(Tokenizer *const restrict t, Error e)
@@ -162,7 +155,7 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool printTokens
         }
         end_loop:
 
-        new_l->block_head = block_head;
+        new_l->blockHead = block_head;
         if (tree_head == NULL) tree_head = last_l = new_l;
         else
         {
@@ -178,7 +171,7 @@ void ParseTree_print(LabelNode *restrict head)
     {
         printf("{LabelNode | '%s'}", head->label);
 
-        for (InstNode *block_head = head->block_head; block_head != NULL; block_head = block_head->next)
+        for (InstNode *block_head = head->blockHead; block_head != NULL; block_head = block_head->next)
             printf(" -> {InstNode | %s | '%s'}", token_names[block_head->type], block_head->str);
 
         if (head->next) puts("\n           |\n           V");

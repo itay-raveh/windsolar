@@ -51,7 +51,7 @@ typedef struct label_node_t
 {
     char *label;                // The label itself
     struct label_node_t *next;  // Next label in the script
-    InstNode *block_head;       // First instruction in the block
+    InstNode *blockHead;       // First instruction in the block
 } LabelNode;
 
 /**
@@ -72,23 +72,16 @@ LabelNode *LabelNode_new(char *label);
 void LabelNode_free(LabelNode *ln);
 
 /**
- * Create a full parse tree based on incoming Tokens from a Tokenizer.
+ * Create a full Args_fromArgv tree based on incoming Tokens from a Tokenizer.
  *
- * @param t - Tokenizer to parse from.
+ * @param t - Tokenizer to Args_fromArgv from.
  * @param printTokens - Whether to print Tokens.
  * @return ptr to the head of the tree.
  */
 LabelNode *ParseTree_fromTokenizer(Tokenizer *restrict t, bool printTokens);
 
 /**
- * Free entire parse tree.
- *
- * @param head - tree head.
- */
-void ParseTree_free(LabelNode *restrict head);
-
-/**
- * Print parse tree.
+ * Print Args_fromArgv tree.
  *
  * @param head - tree head.
  */
