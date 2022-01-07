@@ -61,13 +61,15 @@ int windsolar(int argc, char *argv[])
 }
 
 #ifdef DEBUG
+
 int main()
 {
-    int argc = 2;
-    char *argv[] = {"windsolar", "/home/itay/windsolar/Examples/1_hello_user.wnd"};
+    int argc = 6;
+    char *argv[] = {"windsolar", "Examples/1_hello_user.wnd", "-t", "-p", "-s", "8"};
 
     return windsolar(argc, argv);
 }
+
 #else
 int main(int argc, char *argv[])
 {
