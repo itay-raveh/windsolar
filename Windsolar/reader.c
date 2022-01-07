@@ -8,44 +8,49 @@
 #include "utils.h"          // NEW()
 #include "macros.h"         // EXIT_WITH_MSG()
 
-Reader *Reader_fromFile(const char *restrict fname, size_t size)
+
+Reader *Reader_fromFile(const char *restrict fname)
 {
     assert(fname);
     assert(strlen(fname) >= 1);
-    assert(size >= 0);
-    TRACE("init Reader with fname='%s' size=%lu\n", fname, size);
 
     Reader *r = NEW(Reader);
-    r->buff = malloc_s(size + 1); // +1 for \0
-    r->size = size;
     r->curr = 0;
     r->lineno = 1;
     r->charno = 1;
 
     FILE *f = fopen(fname, "r");
-    if (f == NULL)
-        EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not open %s\n", fname);
+    if (f == NULL) return NULL;
 
-    size_t read_bytes = fread(r->buff, sizeof(char), size, f);
-    int err = ferror(f);
-    fclose(f);
-    if (err != 0 || read_bytes != size)
-        EXIT_WITH_MSG(EXIT_FAILURE, "Error: could not read from %s\n", fname);
+    /* find file size */
+    if (fseek(f, 0, SEEK_END) != 0) goto error;
+    r->size = ftell(f);
+    if (r->size == -1) goto error;
+    if (fseek(f, 0, SEEK_SET) != 0) goto error;
 
-    r->buff[size] = '\0';
+    r->buff = malloc_s(sizeof(char) * (r->size + 1)); // +1 for \0
 
-    // since lineno is advanced in the Reader_next method,
-    // a newline at the start of the file will not be counted
+    /* read file into buffer */
+    size_t read_bytes = fread(r->buff, sizeof(char), r->size, f);
+    if (ferror(f) != 0) goto error;
+    r->buff[read_bytes] = '\0';
+
+    /* since lineno is advanced in the Reader_next method,
+     * a newline at the start of the file will not be counted */
     if (*(r->buff) == '\n')
         r->lineno++;
 
+    fclose(f);
     return r;
+
+    error:
+    fclose(f);
+    return NULL;
 }
 
 void Reader_free(Reader *const restrict r)
 {
     assert(r);
-    TRACE("%s", "free Reader\n");
 
     free(r->buff);
     free(r);

@@ -20,11 +20,10 @@ typedef struct
 /**
  * Dynamically allocate a new Reader and init it from a file
  *
- * @param fname - name of a file that can be opened for reading
- * @param fsize - size of the file in bytes
+ * @param fname - name of a file
  * @return ptr to the new Reader
  */
-Reader *Reader_fromFile(const char *restrict fname, size_t fsize);
+Reader *Reader_fromFile(const char *restrict fname);
 
 /**
  * Free a dynamically allocated Reader.
