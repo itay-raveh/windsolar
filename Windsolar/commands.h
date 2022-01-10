@@ -10,31 +10,20 @@
 #include "parse_tree.h"
 
 /* ------------------- Flow Control ------------------- */
-bool CALL(LabelNode *pt, Stack *ps, Stack *ds);
+bool CALL(LabelNode *pt, Stack *ps, Stack *ds); /* load a subroutine to the ps based on a name in the ds*/
 
 /* -------------------- Arithmetic -------------------- */
-/* pop the top two elements from the dsm add them, and push back */
-bool ADD(Stack *ds);
-/* pop the top two elements from the dsm subtract them, and push back */
-bool SUB(Stack *ds);
-/* pop the top two elements from the dsm multiply them, and push back */
-bool MUL(Stack *ds);
-/* pop the top two elements from the dsm divide them, and push back */
-bool DIV(Stack *ds);
+bool BINARY_OP(Stack *ds, char *op); /* ADD, SUB, MUL or DIV */
 
 /* ---------------------- Stack ----------------------- */
-/* duplicate the top element */
-bool DUP(Stack *ds);
+bool DUP(Stack *ds); /* duplicate the top element */
 
 /* ------------------------ IO ------------------------ */
-/* pop the top element from the ds and print it */
-bool WRITE(Stack *ds);
-/* read input from the user and push it to the ds */
-bool READ(Stack *ds);
+bool WRITE(Stack *ds); /* pop the top element from the ds and print it */
+bool READ(Stack *ds); /* read input from the user and push it to the ds */
 
 /* ---------------------- System ----------------------- */
-/* pop the top element and sleep accordingly */
-bool SLEEP(Stack *ds);
+bool SLEEP(Stack *ds); /* pop the top element and sleep accordingly */
 
 /**
  * Execute a given command. If execution fails, a runtime error will be printed.

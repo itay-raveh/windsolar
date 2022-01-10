@@ -23,18 +23,21 @@ void printCommandRuntimeError(char *command, char *msg)
     fprintf(stderr, "Runtime Error: %s: %s\n", command, msg);
 }
 
+#define DATA_COUNT_MSG(exp) "Expected at least " #exp "items in the Data Stack, found less"
+#define DATA_TYPE_MSG(exp, found) "Expected Data of type " #exp ", found " #found
+
 bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
 {
     if (ds->len < 1)
     {
-        printCommandRuntimeError("CALL", "At least 1 item must be present in the Data Stack");
+        printCommandRuntimeError("CALL", DATA_COUNT_MSG(1));
         return false;
     }
 
     DataFrame *df = Stack_pop(ds);
     if (df->isNumber)
     {
-        printCommandRuntimeError("CALL", "Can not CALL a number");
+        printCommandRuntimeError("CALL", DATA_TYPE_MSG("STRING", "NUMBER"));
         return false;
     }
 
@@ -63,115 +66,33 @@ bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
     return true;
 }
 
-bool ADD(Stack *ds)
+bool BINARY_OP(Stack *ds, char *op)
 {
     if (ds->len < 2)
     {
-        printCommandRuntimeError("ADD", "At least 2 items must be present in the Data Stack");
+        printCommandRuntimeError(op, DATA_COUNT_MSG(2));
         return false;
     }
 
     DataFrame *df1 = Stack_pop(ds);
     if (!df1->isNumber)
     {
-        printCommandRuntimeError("ADD", "Can not ADD on a string");
+        printCommandRuntimeError(op, DATA_TYPE_MSG("NUMBER", "STRING"));
         return false;
     }
     DataFrame *df2 = Stack_pop(ds);
     if (!df2->isNumber)
     {
-        printCommandRuntimeError("ADD", "Can not ADD on a string");
+        printCommandRuntimeError(op, DATA_TYPE_MSG("NUMBER", "STRING"));
         return false;
     }
 
-    double res = df2->number + df1->number;
-    Stack_push(ds, DataFrame_new(&res, NULL));
+    double res;
+    if (strcmp(op, "ADD") == 0) res = df2->number + df1->number;
+    else if (strcmp(op, "SUB") == 0) res = df2->number - df1->number;
+    else if (strcmp(op, "MUL") == 0) res = df2->number * df1->number;
+    else if (strcmp(op, "DIV") == 0) res = df2->number / df1->number;
 
-    DataFrame_free(df1);
-    DataFrame_free(df2);
-    return true;
-}
-
-bool SUB(Stack *ds)
-{
-    if (ds->len < 2)
-    {
-        printCommandRuntimeError("SUB", "At least 2 items must be present in the Data Stack");
-        return false;
-    }
-
-    DataFrame *df1 = Stack_pop(ds);
-    if (!df1->isNumber)
-    {
-        printCommandRuntimeError("SUB", "Can not SUB on a string");
-        return false;
-    }
-    DataFrame *df2 = Stack_pop(ds);
-    if (!df2->isNumber)
-    {
-        printCommandRuntimeError("SUB", "Can not SUB on a string");
-        return false;
-    }
-
-    double res = df2->number - df1->number;
-    Stack_push(ds, DataFrame_new(&res, NULL));
-
-    DataFrame_free(df1);
-    DataFrame_free(df2);
-    return true;
-}
-
-bool MUL(Stack *ds)
-{
-    if (ds->len < 2)
-    {
-        printCommandRuntimeError("MUL", "At least 2 items must be present in the Data Stack");
-        return false;
-    }
-
-    DataFrame *df1 = Stack_pop(ds);
-    if (!df1->isNumber)
-    {
-        printCommandRuntimeError("MUL", "Can not MUL on a string");
-        return false;
-    }
-    DataFrame *df2 = Stack_pop(ds);
-    if (!df2->isNumber)
-    {
-        printCommandRuntimeError("MUL", "Can not MUL on a string");
-        return false;
-    }
-
-    double res = df2->number * df1->number;
-    Stack_push(ds, DataFrame_new(&res, NULL));
-
-    DataFrame_free(df1);
-    DataFrame_free(df2);
-    return true;
-}
-
-bool DIV(Stack *ds)
-{
-    if (ds->len < 2)
-    {
-        printCommandRuntimeError("DIV", "At least 2 items must be present in the Data Stack");
-        return false;
-    }
-
-    DataFrame *df1 = Stack_pop(ds);
-    if (!df1->isNumber)
-    {
-        printCommandRuntimeError("DIV", "Can not DIV on a string");
-        return false;
-    }
-    DataFrame *df2 = Stack_pop(ds);
-    if (!df2->isNumber)
-    {
-        printCommandRuntimeError("DIV", "Can not DIV on a string");
-        return false;
-    }
-
-    double res = df2->number / df1->number;
     Stack_push(ds, DataFrame_new(&res, NULL));
 
     DataFrame_free(df1);
@@ -183,7 +104,7 @@ bool DUP(Stack *ds)
 {
     if (ds->len < 1)
     {
-        printCommandRuntimeError("DUP", "At least 1 item must be present in the Data Stack");
+        printCommandRuntimeError("DUP", DATA_COUNT_MSG(1));
         return false;
     }
 
@@ -201,7 +122,7 @@ bool WRITE(Stack *ds)
 {
     if (ds->len < 1)
     {
-        printCommandRuntimeError("WRITE", "At least 1 item must be present in the Data Stack");
+        printCommandRuntimeError("WRITE", DATA_COUNT_MSG(1));
         return false;
     }
 
@@ -271,19 +192,19 @@ bool SLEEP(Stack *ds)
 {
     if (ds->len < 1)
     {
-        printCommandRuntimeError("SLEEP", "At least 1 item must be present in the Data Stack");
+        printCommandRuntimeError("SLEEP", DATA_COUNT_MSG(1));
         return false;
     }
 
     DataFrame *df = Stack_pop(ds);
     if (!df->isNumber)
     {
-        printCommandRuntimeError("SLEEP", "Can not SLEEP on string");
+        printCommandRuntimeError("SLEEP", DATA_TYPE_MSG("NUMBER", "STRING"));
         return false;
     }
 
     #ifdef WIN32
-    Sleep(pollingDelay);
+    Sleep(pollingDelay * 1000);
     #else
     usleep(df->number * 1000 * 1000);
     #endif
@@ -296,10 +217,7 @@ bool execCommand(LabelNode *pt, Stack *ps, Stack *ds, char *command)
     #define IS(s) (strcmp(command, s) == 0)
 
     if (IS("CALL")) return CALL(pt, ps, ds);
-    if (IS("ADD")) return ADD(ds);
-    if (IS("SUB")) return SUB(ds);
-    if (IS("MUL")) return MUL(ds);
-    if (IS("DIV")) return DIV(ds);
+    if (IS("ADD") || IS("SUB") || IS("MUL") || IS("DIV")) return BINARY_OP(ds, command);
     if (IS("DUP")) return DUP(ds);
     if (IS("WRITE")) return WRITE(ds);
     if (IS("READ")) return READ(ds);
