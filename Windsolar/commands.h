@@ -11,12 +11,18 @@
 
 /* ------------------- Flow Control ------------------- */
 bool CALL(LabelNode *pt, Stack *ps, Stack *ds); /* load a subroutine to the ps based on a name in the ds*/
+bool CCALL(LabelNode *pt, Stack *ps, Stack *ds); /* CALL if top of ds is true */
 
 /* -------------------- Arithmetic -------------------- */
 bool BINARY_OP(Stack *ds, char *op); /* ADD, SUB, MUL or DIV */
 
+/* ---------------------- Logic ----------------------- */
+bool BINARY_CMP(Stack *ds, char *cmp); /* EQ, NE, GT, GE, LT, LE, AND, OR */
+
 /* ---------------------- Stack ----------------------- */
 bool DUP(Stack *ds); /* duplicate the top element */
+bool DUP2(Stack *ds); /* duplicate the top 2 elements */
+bool SWAP12(Stack *ds); /* swap items #1 and #2 */
 
 /* ------------------------ IO ------------------------ */
 bool WRITE(Stack *ds); /* pop the top element from the ds and print it */

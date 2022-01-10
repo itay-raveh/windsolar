@@ -23,7 +23,7 @@ void printCommandRuntimeError(char *command, char *msg)
     fprintf(stderr, "Runtime Error: %s: %s\n", command, msg);
 }
 
-#define DATA_COUNT_MSG(exp) "Expected at least " #exp "items in the Data Stack, found less"
+#define DATA_COUNT_MSG(exp) "Expected at least " #exp " items in the Data Stack, found less"
 #define DATA_TYPE_MSG(exp, found) "Expected Data of type " #exp ", found " #found
 
 bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
@@ -66,6 +66,25 @@ bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
     return true;
 }
 
+bool CCALL(LabelNode *pt, Stack *ps, Stack *ds)
+{
+    if (ds->len < 1)
+    {
+        printCommandRuntimeError("CCALL", DATA_COUNT_MSG(1));
+        return false;
+    }
+
+    DataFrame *df = Stack_pop(ds);
+    if (!df->isNumber)
+    {
+        printCommandRuntimeError("CCALL", DATA_TYPE_MSG("NUMBER", "STRING"));
+        return false;
+    }
+
+    if (df->number != 0) return CALL(pt, ps, ds);
+    else return true;
+}
+
 bool BINARY_OP(Stack *ds, char *op)
 {
     if (ds->len < 2)
@@ -100,6 +119,45 @@ bool BINARY_OP(Stack *ds, char *op)
     return true;
 }
 
+bool BINARY_CMP(Stack *ds, char *cmp)
+{
+    if (ds->len < 2)
+    {
+        printCommandRuntimeError(cmp, DATA_COUNT_MSG(2));
+        return false;
+    }
+
+    DataFrame *df1 = Stack_pop(ds);
+    if (!df1->isNumber)
+    {
+        printCommandRuntimeError(cmp, DATA_TYPE_MSG("NUMBER", "STRING"));
+        return false;
+    }
+    DataFrame *df2 = Stack_pop(ds);
+    if (!df2->isNumber)
+    {
+        printCommandRuntimeError(cmp, DATA_TYPE_MSG("NUMBER", "STRING"));
+        return false;
+    }
+
+    double res;
+    if (strcmp(cmp, "EQ") == 0) res = df2->number == df1->number;
+    else if (strcmp(cmp, "NE") == 0) res = df2->number != df1->number;
+    else if (strcmp(cmp, "GT") == 0) res = df2->number > df1->number;
+    else if (strcmp(cmp, "GE") == 0) res = df2->number >= df1->number;
+    else if (strcmp(cmp, "LT") == 0) res = df2->number < df1->number;
+    else if (strcmp(cmp, "LE") == 0) res = df2->number <= df1->number;
+    else if (strcmp(cmp, "AND") == 0) res = df2->number && df1->number;
+    else if (strcmp(cmp, "OR") == 0) res = df2->number || df1->number;
+    else return false;
+
+    Stack_push(ds, DataFrame_new(&res, NULL));
+
+    DataFrame_free(df1);
+    DataFrame_free(df2);
+    return true;
+}
+
 bool DUP(Stack *ds)
 {
     if (ds->len < 1)
@@ -114,6 +172,43 @@ bool DUP(Stack *ds)
 
     Stack_push(ds, df);
     Stack_push(ds, df_copy);
+
+    return true;
+}
+
+bool DUP2(Stack *ds)
+{
+    if (ds->len < 1)
+    {
+        printCommandRuntimeError("DUP", DATA_COUNT_MSG(1));
+        return false;
+    }
+
+    DataFrame *df1 = Stack_pop(ds), *df1_copy, *df2 = Stack_pop(ds), *df2_copy;
+    if (df1->isNumber) df1_copy = DataFrame_new(&df1->number, NULL);
+    else df1_copy = DataFrame_new(NULL, df1->str);
+    if (df2->isNumber) df2_copy = DataFrame_new(&df2->number, NULL);
+    else df2_copy = DataFrame_new(NULL, df2->str);
+
+    Stack_push(ds, df2);
+    Stack_push(ds, df1);
+    Stack_push(ds, df2_copy);
+    Stack_push(ds, df1_copy);
+
+    return true;
+}
+
+bool SWAP12(Stack *ds)
+{
+    if (ds->len < 2)
+    {
+        printCommandRuntimeError("SWAP", DATA_COUNT_MSG(2));
+        return false;
+    }
+
+    DataFrame *first = Stack_pop(ds), *second = Stack_pop(ds);
+    Stack_push(ds, first);
+    Stack_push(ds, second);
 
     return true;
 }
@@ -217,8 +312,13 @@ bool execCommand(LabelNode *pt, Stack *ps, Stack *ds, char *command)
     #define IS(s) (strcmp(command, s) == 0)
 
     if (IS("CALL")) return CALL(pt, ps, ds);
+    if (IS("CCALL")) return CCALL(pt, ps, ds);
     if (IS("ADD") || IS("SUB") || IS("MUL") || IS("DIV")) return BINARY_OP(ds, command);
+    if (IS("EQ") || IS("NE") || IS("GT") || IS("GE") || IS("LT") || IS("LE") || IS("AND") || IS("OR"))
+        return BINARY_CMP(ds, command);
     if (IS("DUP")) return DUP(ds);
+    if (IS("DUP2")) return DUP2(ds);
+    if (IS("SWAP12")) return SWAP12(ds);
     if (IS("WRITE")) return WRITE(ds);
     if (IS("READ")) return READ(ds);
     if (IS("SLEEP")) return SLEEP(ds);
