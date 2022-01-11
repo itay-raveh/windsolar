@@ -68,21 +68,59 @@ bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
 
 bool CCALL(LabelNode *pt, Stack *ps, Stack *ds)
 {
-    if (ds->len < 1)
+    if (ds->len < 2)
     {
-        printCommandRuntimeError("CCALL", DATA_COUNT_MSG(1));
+        printCommandRuntimeError("CCALL", DATA_COUNT_MSG(2));
         return false;
     }
 
-    DataFrame *df = Stack_pop(ds);
-    if (!df->isNumber)
+    DataFrame *df1 = Stack_pop(ds), *df2 = Stack_pop(ds);
+    if (!df2->isNumber)
     {
         printCommandRuntimeError("CCALL", DATA_TYPE_MSG("NUMBER", "STRING"));
         return false;
     }
 
-    if (df->number != 0) return CALL(pt, ps, ds);
-    else return true;
+    if (df2->number != 0)
+    {
+        Stack_push(ds, df1);
+        DataFrame_free(df2);
+        return CALL(pt, ps, ds);
+    } else
+    {
+        DataFrame_free(df1);
+        DataFrame_free(df2);
+        return true;
+    }
+}
+
+bool BRANCH(LabelNode *pt, Stack *ps, Stack *ds)
+{
+    if (ds->len < 3)
+    {
+        printCommandRuntimeError("BRANCH", DATA_COUNT_MSG(3));
+        return false;
+    }
+
+    DataFrame *df1 = Stack_pop(ds), *df2 = Stack_pop(ds), *df3 = Stack_pop(ds);
+    if (!df3->isNumber)
+    {
+        printCommandRuntimeError("BRANCH", DATA_TYPE_MSG("NUMBER", "STRING"));
+        return false;
+    }
+
+    if (df3->number != 0)
+    {
+        Stack_push(ds, df2);
+        DataFrame_free(df1);
+    } else
+    {
+        Stack_push(ds, df1);
+        DataFrame_free(df2);
+    }
+
+    DataFrame_free(df3);
+    return CALL(pt, ps, ds);
 }
 
 bool BINARY_OP(Stack *ds, char *op)
@@ -111,6 +149,7 @@ bool BINARY_OP(Stack *ds, char *op)
     else if (strcmp(op, "SUB") == 0) res = df2->number - df1->number;
     else if (strcmp(op, "MUL") == 0) res = df2->number * df1->number;
     else if (strcmp(op, "DIV") == 0) res = df2->number / df1->number;
+    else if (strcmp(op, "MOD") == 0) res = (int32_t) df2->number % (int32_t) df1->number;
 
     Stack_push(ds, DataFrame_new(&res, NULL));
 
@@ -158,6 +197,40 @@ bool BINARY_CMP(Stack *ds, char *cmp)
     return true;
 }
 
+bool NOT(Stack *ds)
+{
+    if (ds->len < 1)
+    {
+        printCommandRuntimeError("NOT", DATA_COUNT_MSG(1));
+        return false;
+    }
+
+    DataFrame *df = Stack_pop(ds);
+    if (!df->isNumber)
+    {
+        printCommandRuntimeError("NOT", DATA_TYPE_MSG("NUMBER", "STRING"));
+        return false;
+    }
+
+    double res = !df->number;
+    Stack_push(ds, DataFrame_new(&res, NULL));
+
+    DataFrame_free(df);
+    return true;
+}
+
+bool POP(Stack *ds)
+{
+    if (ds->len < 1)
+    {
+        printCommandRuntimeError("POP", DATA_COUNT_MSG(1));
+        return false;
+    }
+
+    DataFrame_free(Stack_pop(ds));
+    return true;
+}
+
 bool DUP(Stack *ds)
 {
     if (ds->len < 1)
@@ -202,13 +275,29 @@ bool SWAP12(Stack *ds)
 {
     if (ds->len < 2)
     {
-        printCommandRuntimeError("SWAP", DATA_COUNT_MSG(2));
+        printCommandRuntimeError("SWAP12", DATA_COUNT_MSG(2));
         return false;
     }
 
     DataFrame *first = Stack_pop(ds), *second = Stack_pop(ds);
     Stack_push(ds, first);
     Stack_push(ds, second);
+
+    return true;
+}
+
+bool SWAP13(Stack *ds)
+{
+    if (ds->len < 3)
+    {
+        printCommandRuntimeError("SWAP13", DATA_COUNT_MSG(3));
+        return false;
+    }
+
+    DataFrame *first = Stack_pop(ds), *second = Stack_pop(ds), *third = Stack_pop(ds);
+    Stack_push(ds, first);
+    Stack_push(ds, second);
+    Stack_push(ds, third);
 
     return true;
 }
@@ -313,12 +402,16 @@ bool execCommand(LabelNode *pt, Stack *ps, Stack *ds, char *command)
 
     if (IS("CALL")) return CALL(pt, ps, ds);
     if (IS("CCALL")) return CCALL(pt, ps, ds);
-    if (IS("ADD") || IS("SUB") || IS("MUL") || IS("DIV")) return BINARY_OP(ds, command);
+    if (IS("BRANCH")) return BRANCH(pt, ps, ds);
+    if (IS("ADD") || IS("SUB") || IS("MUL") || IS("DIV") || IS("MOD")) return BINARY_OP(ds, command);
+    if (IS("NOT")) return NOT(ds);
     if (IS("EQ") || IS("NE") || IS("GT") || IS("GE") || IS("LT") || IS("LE") || IS("AND") || IS("OR"))
         return BINARY_CMP(ds, command);
+    if (IS("POP")) return POP(ds);
     if (IS("DUP")) return DUP(ds);
     if (IS("DUP2")) return DUP2(ds);
     if (IS("SWAP12")) return SWAP12(ds);
+    if (IS("SWAP13")) return SWAP13(ds);
     if (IS("WRITE")) return WRITE(ds);
     if (IS("READ")) return READ(ds);
     if (IS("SLEEP")) return SLEEP(ds);
