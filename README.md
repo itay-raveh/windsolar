@@ -1,6 +1,6 @@
 # WINDSOLAR
 
-**WINDSOLAR** is a toy language inspired by [GASOIL](https://esolangs.org/wiki/GASOIL), created for educational purposes
+**WINDSOLAR** is a toy language based on [GASOIL](https://esolangs.org/wiki/GASOIL), created for educational purposes
 as my first C project.
 
 It's a stack based language, with a `ProgramStack` (`PS`) containing instructions, and a `DataStack` (`DS`)
