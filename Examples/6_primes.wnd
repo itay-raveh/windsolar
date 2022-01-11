@@ -1,0 +1,15 @@
+# print primes up to 500 #
+MAIN (1; "LOOP"; CALL;)
+
+LOOP (1; ADD; "IS_PRIME"; CALL; "PRINT"; CCALL; DUP; 500; LT; "LOOP"; CCALL)
+
+# WRITE wrapped in a subroutine to allow use of CCALL #
+PRINT (DUP; WRITE; "\n"; WRITE)
+
+# Checks if the number at the top of the stack is prime #
+IS_PRIME (DUP; "PRIME_LOOP"; CALL)
+
+# In a loop, mods a number by 1 less every time #
+PRIME_LOOP (1; SUB; DUP; 1; NE; "PRIME_LOOP_2"; CCALL;)
+PRIME_LOOP_2 (DUP2; MOD; "PRIME_LOOP"; "PUSH_0"; BRANCH)
+PUSH_0(POP; 0)

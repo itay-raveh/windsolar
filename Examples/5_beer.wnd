@@ -1,0 +1,5 @@
+# take one down, pass it around ... #
+MAIN (99; "BTLS"; CALL; "No more bottles of beer on the wall, no more bottles of beer. Go to the store and buy some more, 99 bottles of beer on the wall...\n"; WRITE)
+BTLS ("LINE_1"; CALL; "LINE_2"; CALL; DUP; 0; GT; "BTLS"; CCALL)
+LINE_1 (DUP; WRITE; " bottles of beer on the wall,\t"; WRITE; DUP; WRITE; " bottles of beer.\t"; WRITE)
+LINE_2 ("Take one down, pass it around,\t"; WRITE; 1; SUB; DUP; WRITE; " bottles of beer on the wall.\n"; WRITE)
