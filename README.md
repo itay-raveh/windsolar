@@ -18,3 +18,7 @@ More functions can be found under `Guides/Commands.md`. They are limited,
 but I have found working in this simplistic form a fun little challenge.
 
 Feel free to add interesting examples, and feel even more free to suggest C improvements :) 
+
+## Building
+
+Currently only tested compiling on ubuntu, but it should work on any new linux distro
