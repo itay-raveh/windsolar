@@ -21,6 +21,7 @@ int windsolar(int argc, char *argv[])
     if (a == NULL)
     {
         fputs(usage, stderr);
+        Args_free(a);
         return EXIT_FAILURE;
     }
 
@@ -28,6 +29,8 @@ int windsolar(int argc, char *argv[])
     if (r == NULL)
     {
         perror("Input File");
+        Args_free(a);
+        Reader_free(r);
         return EXIT_FAILURE;
     }
 
@@ -60,19 +63,7 @@ int windsolar(int argc, char *argv[])
     return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-#ifdef DEBUG
-
-int main()
-{
-    int argc = 6;
-    char *argv[] = {"windsolar", "Examples/1_hello_user.wnd", "-t", "-p", "-s", "8"};
-
-    return windsolar(argc, argv);
-}
-
-#else
 int main(int argc, char *argv[])
 {
     return windsolar(argc, argv);
 }
-#endif
