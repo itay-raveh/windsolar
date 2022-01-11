@@ -29,11 +29,11 @@ bool mainloop(LabelNode *restrict pt, Stack *const restrict ps, Stack *const res
     {
         if (print_stacks)
         {
-            puts("\nDATA STACK");
+            fputs("\nDATA STACK\n", stderr);
             Stack_print(ds, FRAME_W, frames, (void (*)(void *, uint16_t)) DataFrame_print);
-            puts("PROGRAM STACK");
+            fputs("PROGRAM STACK\n", stderr);
             Stack_print(ps, FRAME_W, frames, (void (*)(void *, uint16_t)) ProgramFrame_print);
-            puts("");
+            fputs("\n", stderr);
         }
 
         ProgramFrame *pf = Stack_pop(ps);

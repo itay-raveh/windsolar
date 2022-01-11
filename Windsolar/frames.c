@@ -53,13 +53,13 @@ void DataFrame_print(DataFrame *const restrict df, const uint16_t field_width)
     if (df->isNumber)
     {
         if ((int64_t) df->number == df->number)
-            printf("%*ld", field_width * -1, (int64_t) df->number);
+            fprintf(stderr, "%*ld", field_width * -1, (int64_t) df->number);
         else
-            printf("%*f", field_width * -1, df->number);
+            fprintf(stderr, "%*f", field_width * -1, df->number);
     } else
     {
         char *str = string_repr(df->str, strlen(df->str), field_width);
-        printf("%*.*s", field_width * -1, field_width, str);
+        fprintf(stderr, "%*.*s", field_width * -1, field_width, str);
         free(str);
     }
 }
@@ -83,8 +83,8 @@ void ProgramFrame_print(ProgramFrame *const restrict pf, const uint16_t field_wi
     if (pf->type == T_STRING)
     {
         char *str = string_repr(pf->str, strlen(pf->str), field_width);
-        printf("%*.*s", field_width * -1, field_width, str);
+        fprintf(stderr, "%*.*s", field_width * -1, field_width, str);
         free(str);
     } else
-        printf("%*.*s", field_width * -1, field_width, pf->str);
+        fprintf(stderr, "%*.*s", field_width * -1, field_width, pf->str);
 }

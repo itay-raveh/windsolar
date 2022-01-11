@@ -38,7 +38,7 @@ int windsolar(int argc, char *argv[])
     LabelNode *pt = ParseTree_fromTokenizer(t, a->printTokens);
     if (a->printTokens)
     {
-        printf("Enter to continue...");
+        fprintf(stderr, "Enter to continue...");
         getc(stdin);
     }
 
@@ -48,7 +48,7 @@ int windsolar(int argc, char *argv[])
     if (a->printParseTree)
     {
         ParseTree_print(pt);
-        printf("Enter to continue...");
+        fprintf(stderr, "Enter to continue...");
         getc(stdin);
     }
 

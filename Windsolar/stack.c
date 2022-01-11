@@ -56,27 +56,27 @@ void Stack_print(Stack *const restrict s, const uint16_t frame_width, const uint
     const int64_t last = (s->len > frames ? s->len - frames : 0) - 1;
     const uint16_t content_width = frame_width - 2;
 
-    printf("T ");
+    fprintf(stderr, "T ");
     for (int64_t i = first; i > last; i--)
     {
-        printf("+");
+        fprintf(stderr, "+");
         for (uint16_t j = 0; j < frame_width; j++)
-            printf("-");
+            fprintf(stderr, "-");
     }
-    printf("+\nO");
+    fprintf(stderr, "+\nO");
 
     for (int64_t i = first; i > last; i--)
     {
-        printf(" | ");
+        fprintf(stderr, " | ");
         print_item(s->data[i], content_width);
     }
 
-    printf(" |\nP ");
+    fprintf(stderr, " |\nP ");
     for (int64_t i = first; i > last; i--)
     {
-        printf("+");
+        fprintf(stderr, "+");
         for (uint16_t j = 0; j < frame_width; j++)
-            printf("-");
+            fprintf(stderr, "-");
     }
-    puts("+");
+    fputs("+\n", stderr);
 }

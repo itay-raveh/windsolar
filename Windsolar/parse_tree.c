@@ -49,7 +49,7 @@ void LabelNode_free(LabelNode *const restrict ln)
 
 void printSyntaxError(Tokenizer *const restrict t, const Error e)
 {
-    printf("SyntaxError: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[e]);
+    fprintf(stderr, "SyntaxError: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[e]);
 }
 
 void printToken(Tokenizer *const restrict t)
@@ -58,7 +58,7 @@ void printToken(Tokenizer *const restrict t)
     sprintf(pos, "%zu,%zu-%zu", t->lineno, t->charno - t->len - 1, t->charno - 2);
 
     char *str = newstr(t->str, t->len);
-    printf("%-15s %-15s '%s'\n", pos, token_names[t->token], str);
+    fprintf(stderr, "%-15s %-15s '%s'\n", pos, token_names[t->token], str);
     free(str);
 }
 
@@ -124,13 +124,10 @@ LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, const bool print
                     // currently sub blocks are not supported
                     printSyntaxError(t, E_SUB_BLOCKS_UNSUPPORTED);
                     return NULL;
-                case T_RPAR:
-                    goto end_loop;
-                case T_SEMICOL:
-                    last_t = T_SEMICOL;
+                case T_RPAR:goto end_loop;
+                case T_SEMICOL:last_t = T_SEMICOL;
                     break;
-                case T_ENDMARKER:
-                    printSyntaxError(t, E_UNCLOSED_BLOCK);
+                case T_ENDMARKER:printSyntaxError(t, E_UNCLOSED_BLOCK);
                     return NULL;
                 case T_STRING:
                 case T_NUMBER:
@@ -169,12 +166,12 @@ void ParseTree_print(LabelNode *restrict head)
 {
     for (; head != NULL; head = head->next)
     {
-        printf("{LabelNode | '%s'}", head->label);
+        fprintf(stderr, "{LabelNode | '%s'}", head->label);
 
         for (InstNode *block_head = head->blockHead; block_head != NULL; block_head = block_head->next)
-            printf(" -> {InstNode | %s | '%s'}", token_names[block_head->type], block_head->str);
+            fprintf(stderr, " -> {InstNode | %s | '%s'}", token_names[block_head->type], block_head->str);
 
-        if (head->next) puts("\n           |\n           V");
-        else puts("");
+        if (head->next) fputs("\n           |\n           V\n", stderr);
+        else fputs("\n", stderr);
     }
 }
