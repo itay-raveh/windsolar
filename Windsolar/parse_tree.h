@@ -37,7 +37,7 @@ typedef struct inst_node_t
  * This should be a dynamically allocated string, which will be freed along with the InstNode.
  * @return ptr to the new InstNode.
  */
-InstNode *InstNode_new(Token type, char *str);
+InstNode *InstNode_new(Token type, char *restrict str);
 
 /**
  * Free the InstNode and it's str, for the given node and every node following.
@@ -51,7 +51,7 @@ typedef struct label_node_t
 {
     char *label;                // The label itself
     struct label_node_t *next;  // Next label in the script
-    InstNode *blockHead;       // First instruction in the block
+    InstNode *blockHead;        // First instruction in the block
 } LabelNode;
 
 /**
@@ -61,7 +61,7 @@ typedef struct label_node_t
  * This should be a dynamically allocated string, which will be freed along with the LabelNode.
  * @return ptr to the new LabelNode.
  */
-LabelNode *LabelNode_new(char *label);
+LabelNode *LabelNode_new(char *restrict label);
 
 /**
  * Free the LabelNode, the label, and the entire list of InstNodes connected to it,
@@ -69,7 +69,7 @@ LabelNode *LabelNode_new(char *label);
  *
  * @param ln - LabelNode to free.
  */
-void LabelNode_free(LabelNode *ln);
+void LabelNode_free(LabelNode *restrict ln);
 
 /**
  * Create a full Args_fromArgv tree based on incoming Tokens from a Tokenizer.

@@ -47,7 +47,7 @@ void LabelNode_free(LabelNode *const restrict ln)
     }
 }
 
-void printSyntaxError(Tokenizer *const restrict t, Error e)
+void printSyntaxError(Tokenizer *const restrict t, const Error e)
 {
     printf("SyntaxError: %zu, %lu ('%c'): %s\n", t->lineno, t->charno - t->len, *t->str, error_msg[e]);
 }
@@ -62,7 +62,7 @@ void printToken(Tokenizer *const restrict t)
     free(str);
 }
 
-bool nextToken(Tokenizer *const restrict t, bool print)
+bool nextToken(Tokenizer *const restrict t, const bool print)
 {
     if (!Tokenizer_next(t))
     {
@@ -74,7 +74,7 @@ bool nextToken(Tokenizer *const restrict t, bool print)
     return true;
 }
 
-LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, bool printTokens)
+LabelNode *ParseTree_fromTokenizer(Tokenizer *const restrict t, const bool printTokens)
 {
     LabelNode *tree_head = NULL, *last_l, *new_l;
 

@@ -15,10 +15,10 @@ typedef struct
     Reader *reader;         // Reader of input to tokenize
     Token token;            // Current token type
     char *str;              // Start of current token
-    size_t len;             // Length of the current token
+    uint32_t len;           // Length of the current token
     Error err;              // Error type for when one is found
-    size_t lineno;          // Current line number
-    size_t charno;          // Current char number relative to start of line
+    uint64_t lineno;        // Current line number
+    uint64_t charno;        // Current char number relative to start of line
 } Tokenizer;
 
 /**

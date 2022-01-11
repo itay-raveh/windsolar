@@ -10,11 +10,11 @@
 
 typedef struct
 {
-    char *buff;     // Holds the entire input
-    size_t size;    // The size of the input
-    int32_t curr;   // Current char index, relative to file start
-    size_t charno;  // Current char index, relative to start of current line
-    size_t lineno;  // Current Line number
+    char *buff;         // Holds the entire input
+    uint64_t size;      // The size of the input
+    uint64_t curr;      // Current char index, relative to file start
+    uint64_t charno;    // Current char index, relative to start of current line
+    uint64_t lineno;    // Current Line number
 } Reader;
 
 /**

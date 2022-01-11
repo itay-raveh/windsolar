@@ -34,7 +34,7 @@ Args *Args_fromArgv(uint8_t argc, char *argv[])
     return a;
 }
 
-void Args_free(Args *a)
+void Args_free(Args *const restrict a)
 {
     free(a);
 }

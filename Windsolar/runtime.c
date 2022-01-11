@@ -13,7 +13,8 @@
 
 #define FRAME_W 16
 
-bool mainloop(LabelNode *pt, Stack *ps, Stack *ds, bool print_stacks, size_t frames)
+bool mainloop(LabelNode *restrict pt, Stack *const restrict ps, Stack *const restrict ds, const bool print_stacks,
+              uint64_t frames)
 {
     DataFrame *main = DataFrame_new(NULL, newstr("MAIN", 4));
     Stack_push(ds, main);

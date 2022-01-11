@@ -24,7 +24,7 @@ void *malloc_s(size_t size);
  * @param size - new size of memory block
  * @return ptr to memory block
  */
-void *realloc_s(void *ptr, size_t size);
+void *realloc_s(void *restrict ptr, size_t size);
 
 /**
  * Dynamically a allocate a new string as a copy of the source

@@ -2,7 +2,6 @@
 // Created by itay on 11/22/21.
 //
 
-#include <string.h>         // strlen()
 #include <assert.h>         // assert()
 #include "reader.h"
 #include "utils.h"          // NEW()

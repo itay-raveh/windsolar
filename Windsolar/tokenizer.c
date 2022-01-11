@@ -81,20 +81,15 @@ bool Tokenizer_next(Tokenizer *const restrict t)
 
         switch (c)
         {
-            case ';':
-                t->token = T_SEMICOL;
+            case ';':t->token = T_SEMICOL;
                 break;
-            case '(':
-                t->token = T_LPAR;
+            case '(':t->token = T_LPAR;
                 break;
-            case ')':
-                t->token = T_RPAR;
+            case ')':t->token = T_RPAR;
                 break;
-            case '\0':
-                t->token = T_ENDMARKER;
+            case '\0':t->token = T_ENDMARKER;
                 return true;
-            default:
-                assert(false); // Should be impossible
+            default:assert(false); // Should be impossible
         }
 
         NEXTC;

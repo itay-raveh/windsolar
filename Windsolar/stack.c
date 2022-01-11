@@ -18,14 +18,14 @@ Stack *Stack_new()
     return s;
 }
 
-void Stack_free(Stack *s, void (*free_item)(void *))
+void Stack_free(Stack *const restrict s, void (*free_item)(void *))
 {
     for (size_t i = 0; i < s->len; i++) free_item(s->data[i]);
     free(s->data);
     free(s);
 }
 
-void Stack_push(Stack *s, void *frame)
+void Stack_push(Stack *const restrict s, void *const restrict frame)
 {
     assert(s);
     assert(frame);
@@ -39,7 +39,7 @@ void Stack_push(Stack *s, void *frame)
     s->data[s->len - 1] = frame;
 }
 
-void *Stack_pop(Stack *s)
+void *Stack_pop(Stack *const restrict s)
 {
     assert(s);
     assert(s->len > 0);
@@ -47,16 +47,17 @@ void *Stack_pop(Stack *s)
     return s->data[--(s->len)];
 }
 
-void Stack_print(Stack *s, const uint16_t frame_width, const uint64_t frames, void (*print_item)(void *, uint16_t))
+void Stack_print(Stack *const restrict s, const uint16_t frame_width, const uint64_t frames,
+                 void (*print_item)(void *, uint16_t))
 {
     assert(s);
 
-    const int32_t first = s->len - 1;
-    const int32_t last = (s->len > frames ? s->len - frames: 0) - 1;
+    const int64_t first = s->len - 1;
+    const int64_t last = (s->len > frames ? s->len - frames : 0) - 1;
     const uint16_t content_width = frame_width - 2;
 
     printf("T ");
-    for (int32_t i = first; i > last; i--)
+    for (int64_t i = first; i > last; i--)
     {
         printf("+");
         for (uint16_t j = 0; j < frame_width; j++)
@@ -64,14 +65,14 @@ void Stack_print(Stack *s, const uint16_t frame_width, const uint64_t frames, vo
     }
     printf("+\nO");
 
-    for (int32_t i = first; i > last; i--)
+    for (int64_t i = first; i > last; i--)
     {
         printf(" | ");
         print_item(s->data[i], content_width);
     }
 
     printf(" |\nP ");
-    for (int32_t i = first; i > last; i--)
+    for (int64_t i = first; i > last; i--)
     {
         printf("+");
         for (uint16_t j = 0; j < frame_width; j++)

@@ -26,7 +26,7 @@ void printCommandRuntimeError(char *command, char *msg)
 #define DATA_COUNT_MSG(exp) "Expected at least " #exp " items in the Data Stack, found less"
 #define DATA_TYPE_MSG(exp, found) "Expected Data of type " #exp ", found " #found
 
-bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
+bool CALL(LabelNode *restrict pt, Stack *const restrict ps, Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -66,7 +66,7 @@ bool CALL(LabelNode *pt, Stack *ps, Stack *ds)
     return true;
 }
 
-bool CCALL(LabelNode *pt, Stack *ps, Stack *ds)
+bool CCALL(LabelNode *restrict pt, Stack *const restrict ps, Stack *const restrict ds)
 {
     if (ds->len < 2)
     {
@@ -94,7 +94,7 @@ bool CCALL(LabelNode *pt, Stack *ps, Stack *ds)
     }
 }
 
-bool BRANCH(LabelNode *pt, Stack *ps, Stack *ds)
+bool BRANCH(LabelNode *restrict pt, Stack *const restrict ps, Stack *const restrict ds)
 {
     if (ds->len < 3)
     {
@@ -123,7 +123,7 @@ bool BRANCH(LabelNode *pt, Stack *ps, Stack *ds)
     return CALL(pt, ps, ds);
 }
 
-bool BINARY_OP(Stack *ds, char *op)
+bool BINARY_OP(Stack *const restrict ds, char *const restrict op)
 {
     if (ds->len < 2)
     {
@@ -158,7 +158,7 @@ bool BINARY_OP(Stack *ds, char *op)
     return true;
 }
 
-bool BINARY_CMP(Stack *ds, char *cmp)
+bool BINARY_CMP(Stack *const restrict ds, char *const restrict cmp)
 {
     if (ds->len < 2)
     {
@@ -197,7 +197,7 @@ bool BINARY_CMP(Stack *ds, char *cmp)
     return true;
 }
 
-bool NOT(Stack *ds)
+bool NOT(Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -219,7 +219,7 @@ bool NOT(Stack *ds)
     return true;
 }
 
-bool POP(Stack *ds)
+bool POP(Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -231,7 +231,7 @@ bool POP(Stack *ds)
     return true;
 }
 
-bool DUP(Stack *ds)
+bool DUP(Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -249,7 +249,7 @@ bool DUP(Stack *ds)
     return true;
 }
 
-bool DUP2(Stack *ds)
+bool DUP2(Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -271,7 +271,7 @@ bool DUP2(Stack *ds)
     return true;
 }
 
-bool SWAP12(Stack *ds)
+bool SWAP12(Stack *const restrict ds)
 {
     if (ds->len < 2)
     {
@@ -286,7 +286,7 @@ bool SWAP12(Stack *ds)
     return true;
 }
 
-bool SWAP13(Stack *ds)
+bool SWAP13(Stack *const restrict ds)
 {
     if (ds->len < 3)
     {
@@ -302,7 +302,7 @@ bool SWAP13(Stack *ds)
     return true;
 }
 
-bool WRITE(Stack *ds)
+bool WRITE(Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -356,7 +356,7 @@ bool WRITE(Stack *ds)
 
 #define MAX_INPUT_LEN 100
 
-bool READ(Stack *ds)
+bool READ(Stack *const restrict ds)
 {
     char *inp = malloc_s(MAX_INPUT_LEN);
     if (fgets(inp, MAX_INPUT_LEN, stdin) == NULL)
@@ -372,7 +372,7 @@ bool READ(Stack *ds)
     return true;
 }
 
-bool SLEEP(Stack *ds)
+bool SLEEP(Stack *const restrict ds)
 {
     if (ds->len < 1)
     {
@@ -396,7 +396,8 @@ bool SLEEP(Stack *ds)
     return true;
 }
 
-bool execCommand(LabelNode *pt, Stack *ps, Stack *ds, char *command)
+bool
+execCommand(LabelNode *restrict pt, Stack *const restrict ps, Stack *const restrict ds, char *const restrict command)
 {
     #define IS(s) (strcmp(command, s) == 0)
 

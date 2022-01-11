@@ -18,6 +18,6 @@ typedef struct
 } Args;
 
 Args *Args_fromArgv(uint8_t argc, char *argv[]);
-void Args_free(Args *a);
+void Args_free(Args *restrict a);
 
 #endif //WINDSOLAR_ARGS_H

@@ -8,7 +8,7 @@
 #include "frames.h"
 #include "utils.h"  // NEW(), realloc_s(), malloc_s()
 
-char *string_repr(char *src, size_t len, size_t field_width)
+char *string_repr(char *src, const size_t len, const size_t field_width)
 {
     char *str = (char *) malloc_s(len + 3);
     size_t new_len = len + 2;
@@ -27,7 +27,7 @@ char *string_repr(char *src, size_t len, size_t field_width)
     return str;
 }
 
-DataFrame *DataFrame_new(const double *number, char *str)
+DataFrame *DataFrame_new(const double *restrict number, char *const restrict str)
 {
     DataFrame *df = NEW(DataFrame);
     if (number != NULL)
@@ -42,13 +42,13 @@ DataFrame *DataFrame_new(const double *number, char *str)
     return df;
 }
 
-void DataFrame_free(DataFrame *df)
+void DataFrame_free(DataFrame *restrict df)
 {
     if (!df->isNumber) free(df->str);
     free(df);
 }
 
-void DataFrame_print(DataFrame *df, uint16_t field_width)
+void DataFrame_print(DataFrame *const restrict df, const uint16_t field_width)
 {
     if (df->isNumber)
     {
@@ -64,7 +64,7 @@ void DataFrame_print(DataFrame *df, uint16_t field_width)
     }
 }
 
-ProgramFrame *ProgramFrame_new(Token type, char *str)
+ProgramFrame *ProgramFrame_new(const Token type, char *const restrict str)
 {
     ProgramFrame *pf = NEW(ProgramFrame);
     pf->type = type;
@@ -72,20 +72,19 @@ ProgramFrame *ProgramFrame_new(Token type, char *str)
     return pf;
 }
 
-void ProgramFrame_free(ProgramFrame *pf)
+void ProgramFrame_free(ProgramFrame *const restrict pf)
 {
     free(pf->str);
     free(pf);
 }
 
-void ProgramFrame_print(ProgramFrame *pf, uint16_t field_width)
+void ProgramFrame_print(ProgramFrame *const restrict pf, const uint16_t field_width)
 {
     if (pf->type == T_STRING)
     {
         char *str = string_repr(pf->str, strlen(pf->str), field_width);
         printf("%*.*s", field_width * -1, field_width, str);
         free(str);
-    }
-    else
+    } else
         printf("%*.*s", field_width * -1, field_width, pf->str);
 }
