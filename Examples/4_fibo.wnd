@@ -1,6 +1,6 @@
-# fibonacci numbers up to 100 #
+# fibonacci numbers #
 MAIN (0; 1; "FIB"; CALL)
-FIB (DUP2; ADD; "PRINT_NUM"; CALL; DUP; 100; LE; "FIB"; CCALL)
+FIB (DUP2; ADD; "PRINT_NUM"; CALL; 0.1; SLEEP; "FIB"; CALL)
 
 # print number and newline #
 PRINT_NUM (DUP; WRITE; "\n"; WRITE)

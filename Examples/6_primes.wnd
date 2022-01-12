@@ -1,9 +1,8 @@
-# print primes up to 500 #
+# prime numbers #
 MAIN (1; "LOOP"; CALL;)
 
-LOOP (1; ADD; "IS_PRIME"; CALL; "PRINT"; CCALL; DUP; 500; LT; "LOOP"; CCALL)
+LOOP (1; ADD; "IS_PRIME"; CALL; "PRINT"; CCALL; "LOOP"; CALL)
 
-# WRITE wrapped in a subroutine to allow use of CCALL #
 PRINT (DUP; WRITE; "\n"; WRITE)
 
 # Checks if the number at the top of the stack is prime #
