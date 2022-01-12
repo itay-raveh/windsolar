@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #ifdef WIN32
 #include <Windows.h>
@@ -313,8 +314,8 @@ bool WRITE(Stack *const restrict ds)
     DataFrame *df = Stack_pop(ds);
     if (df->isNumber)
     {
-        if ((int64_t) df->number == df->number)
-            printf("%ld", (int64_t) df->number);
+        if (floor(df->number) == ceil(df->number))
+            printf("%0.0f", df->number);
         else
             printf("%f", df->number);
     } else

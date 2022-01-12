@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "frames.h"
 #include "utils.h"  // NEW(), realloc_s(), malloc_s()
 
@@ -52,8 +53,8 @@ void DataFrame_print(DataFrame *const restrict df, const uint16_t field_width)
 {
     if (df->isNumber)
     {
-        if ((int64_t) df->number == df->number)
-            fprintf(stderr, "%*ld", field_width * -1, (int64_t) df->number);
+        if (floor(df->number) == ceil(df->number))
+            fprintf(stderr, "%*.0f", field_width * -1, df->number);
         else
             fprintf(stderr, "%*f", field_width * -1, df->number);
     } else
